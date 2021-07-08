@@ -1,20 +1,21 @@
 <template>
-    <div>
-        <div>
-            <span id="id_user_name">{{userName}}</span>
-        </div>
-        <div>
-            <span>支払金額</span>
-            <span id="id_user_payed_mount">{{userPayedMount}}</span>
-            <p>
-                <input type="number"><button id="id_button_pay">加算</button>
-            </p>
-        </div>
-        <div>
-            <span>調整金額</span>
-            <span id="id_user_mount_to_split_pay">{{userMountToSplitPay}}</span>
-        </div>
-    </div>
+    <v-container>
+        <v-row id="id_user_name">
+            <p>{{userName}}</p>
+        </v-row>
+        <v-row id="id_user_payment">
+            <v-collum>
+                <p>支払金額：{{userPayedMount}}</p>
+                <p>
+                    <input type="number"><button id="id_button_pay">加算</button>
+                </p>
+            </v-collum>
+        </v-row>
+        <v-row id="id_user_">
+            <span>調整金額：</span>
+            <span>{{userMountToSplitPay}}</span>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
@@ -29,3 +30,7 @@ export default {
     }
 }
 </script>
+
+<style>
+    .
+</style>

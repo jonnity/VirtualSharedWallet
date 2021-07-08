@@ -1,21 +1,20 @@
 <template>
-  <div id="app">
+  <v-app>
     <user-info></user-info>
-  </div>
+  </v-app>
 </template>
 
 <script>
-import userInfo from './components/userInfo.vue'
+import userInfo from './components/userInfo.vue';
 
 export default {
   name: 'App',
   components: {
-    userInfo    
-  }
-}
-</script>
+    userInfo,
+  },
 
-<style>
-/* #app {
-} */
-</style>
+  data: () => ({
+    //
+  }),
+};
+</script>
