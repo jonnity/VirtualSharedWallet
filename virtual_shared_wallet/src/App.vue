@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <user-info></user-info>
+    <user-info></user-info>
   </v-app>
 </template>
 
