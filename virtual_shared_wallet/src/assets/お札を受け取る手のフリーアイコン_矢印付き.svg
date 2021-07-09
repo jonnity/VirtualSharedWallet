@@ -39,34 +39,31 @@
      inkscape:label="レイヤー 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <g
-       id="g14231"
-       transform="matrix(1.0458608,0,0,1,-4.1073404,4.640625)">
-      <rect
-         style="opacity:1;fill:#323232;fill-opacity:1;fill-rule:evenodd;stroke-width:0.264583"
-         id="rect217"
-         width="52.83173"
-         height="22.132212"
-         x="90.670685"
-         y="38.195915" />
-      <path
-         sodipodi:type="star"
-         style="opacity:1;fill:#323232;fill-opacity:1"
-         id="path14147"
-         inkscape:flatsided="false"
-         sodipodi:sides="3"
-         sodipodi:cx="-84.998489"
-         sodipodi:cy="-143.01334"
-         sodipodi:r1="231.24606"
-         sodipodi:r2="115.62304"
-         sodipodi:arg1="0.52359878"
-         sodipodi:arg2="1.5707963"
-         inkscape:rounded="0"
-         inkscape:randomized="0"
-         d="m 115.26648,-27.390304 -200.264966,7e-6 -200.264974,-8e-6 100.13248,-173.434545 100.132492,-173.43455 100.132486,173.43454 z"
-         transform="matrix(0.26458333,0,0,0.06081687,139.57573,41.181997)"
-         inkscape:transform-center-y="-3.515915" />
-    </g>
+    <rect
+       style="fill:#323232;fill-opacity:1;fill-rule:evenodd;stroke-width:0.194332"
+       id="rect217"
+       width="45.309784"
+       height="13.921875"
+       x="95.694"
+       y="49.753448" />
+    <path
+       sodipodi:type="star"
+       style="opacity:1;fill:#323232;fill-opacity:1"
+       id="path14147"
+       inkscape:flatsided="false"
+       sodipodi:sides="3"
+       sodipodi:cx="-84.998489"
+       sodipodi:cy="-143.01334"
+       sodipodi:r1="231.24606"
+       sodipodi:r2="115.62304"
+       sodipodi:arg1="0.52359878"
+       sodipodi:arg2="1.5707963"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       transform="matrix(0.20185852,0,0,0.04743826,135.50656,51.990955)"
+       inkscape:transform-center-y="-2.7424768"
+       d="m 115.26648,-27.390304 -200.264966,7e-6 -200.264974,-8e-6 100.13248,-173.434545 100.132492,-173.43455 100.132486,173.43454 z"
+       inkscape:transform-center-x="-5.8048742e-06" />
     <image
        preserveAspectRatio="none"
        inkscape:svg-dpi="96"

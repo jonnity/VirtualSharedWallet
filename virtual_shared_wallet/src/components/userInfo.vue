@@ -15,9 +15,12 @@
                     <v-btn
                         color="warning"
                         fab
-                        dark
-                    >
-                        <v-img src="./../assets/お札を受け取る手のフリーアイコン_矢印付き.svg"></v-img>
+                        dark>
+                        <v-img 
+                            height=auto
+                            width=20px
+                            src="./../assets/お札のアイコン_矢印付き.svg">
+                        </v-img>
                     </v-btn>
                 </div>
 
