@@ -1,19 +1,17 @@
 <template>
   <v-app>
-    <user-info></user-info>
-    <user-info></user-info>
+    <users></users>
   </v-app>
 </template>
 
 <script>
-import userInfo from './components/userInfo.vue';
+import users from "./components/users.vue"
 
 export default {
   name: 'App',
   components: {
-    userInfo,
+    users
   },
-
   data: () => ({
     //
   }),
