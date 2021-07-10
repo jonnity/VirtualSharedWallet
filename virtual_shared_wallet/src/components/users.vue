@@ -51,13 +51,9 @@ export default {
                 }
             });
             instance.$mount("#user_" + this.userNum)
-            // document.getElementById('user_' + this.userNum).appendChild(instance.$el)
 
             this.userNum++
             this.appendedUserName = ""
-            // new Vue({
-            //     render: h => h(userInfo, { props: { userName: this.appendedUserName } })
-            // }).$mount('#id_users');
         }
     }
 }

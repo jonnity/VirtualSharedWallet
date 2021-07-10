@@ -4,17 +4,10 @@ import vuetify from './plugins/vuetify'
 import '@mdi/font/css/materialdesignicons.css'
 
 Vue.config.productionTip = false
-    // Vue.use(vuetify)
-
-// new vuetify({
-//     icons: {
-//         iconfont: 'mdi', // default - only for display purposes
-//     },
-// }).$mount('#app')
 
 new Vue({
     icons: {
-        iconfont: 'mdi', // default - only for display purposes
+        iconfont: 'mdi',
     },
     vuetify,
     render: h => h(App)
