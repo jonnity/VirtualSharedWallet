@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <users></users>
+    <users id="id_component_users"></users>
   </v-app>
 </template>
 

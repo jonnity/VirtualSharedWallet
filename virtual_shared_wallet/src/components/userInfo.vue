@@ -13,7 +13,7 @@
                 <v-col class="mb-0 pb-0">
                     <v-text-field
                         type="number"
-                        v-model.number="payment_amount"
+                        v-model.number="paymentAmount"
                         prefix="￥"
                         label="支払金額"
                         dence
@@ -27,7 +27,7 @@
                         color="warning"
                         fab
                         dark
-                        @click="add_payment_amount()"
+                        @click="add_paymentAmount"
                     >
                         <!-- <v-icon>mdi-cash-multiple</v-icon> -->
                         <v-img src="./../assets/支払い加算.png" width=25 height=25 contain></v-img>
@@ -36,7 +36,7 @@
             </v-row>
             <v-row class="my-0 py-0">
                 <v-col class="mb-0 pb-0">
-                    <span>累計支払金額：{{ userPayedMount }}</span>
+                    <span>累計支払金額：{{ userPayedAmount }}</span>
                 </v-col>
             </v-row>
             <v-row class="my-0 py-0">
@@ -54,21 +54,25 @@
 
 <script>
 export default {
+    name: "userInfo",
     props: ["userName"],
     data: function () {
         return {
-            "userPayedMount": 0,
-            "payment_amount": "",
+            "userPayedAmount": 0,
+            "paymentAmount": "",
             "userSplitPayment": 0,
         };
     },
     methods: {
-        add_payment_amount: function(){
-            this.userPayedMount += this.payment_amount;
-            this.payment_amount = "";
-            this.userPayedMount = Number(this.userPayedMount);
+        add_paymentAmount: function(){
+            this.userPayedAmount += this.paymentAmount;
+            this.$emit("userPayEvent", this.paymentAmount);
+            this.paymentAmount = "";
+            this.userPayedAmount = Number(this.userPayedAmount);
         },
     },
+    // computed: {
+    // }
 };
 </script>
 
