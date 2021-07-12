@@ -23,20 +23,19 @@
                 </v-btn>
             </v-col>
         </v-row>
-        <v-row>
-            <p>{{ totalPayment }}</p>
+        <v-row>  
+            <p>総額：{{ totalPayment }}</p>
         </v-row>
         <v-row>
-            <userInfo id="id_user01" v-if="userNum>=1"  :userName="userNameList[0]" @userPayEvent="calcTotalPayment"></userInfo>
-            <userInfo id="id_user02" v-if="userNum>=2"  :userName="userNameList[1]" @userPayEvent="calcTotalPayment"></userInfo>
-            <userInfo id="id_user03" v-if="userNum>=3"  :userName="userNameList[2]" @userPayEvent="calcTotalPayment"></userInfo>
-            <userInfo id="id_user04" v-if="userNum>=4"  :userName="userNameList[3]" @userPayEvent="calcTotalPayment"></userInfo>
-            <userInfo id="id_user05" v-if="userNum>=5"  :userName="userNameList[4]" @userPayEvent="calcTotalPayment"></userInfo>
-            <userInfo id="id_user06" v-if="userNum>=6"  :userName="userNameList[5]" @userPayEvent="calcTotalPayment"></userInfo>
-            <userInfo id="id_user07" v-if="userNum>=7"  :userName="userNameList[6]" @userPayEvent="calcTotalPayment"></userInfo>
-            <userInfo id="id_user08" v-if="userNum>=8"  :userName="userNameList[7]" @userPayEvent="calcTotalPayment"></userInfo>
-            <userInfo id="id_user09" v-if="userNum>=9"  :userName="userNameList[8]" @userPayEvent="calcTotalPayment"></userInfo>
-            <userInfo id="id_user10" v-if="userNum>=10" :userName="userNameList[9]" @userPayEvent="calcTotalPayment"></userInfo>
+            <p v-if="userNum >= 2">一人あたり：{{ averagePayment }}</p>
+        </v-row>
+        <!-- <v-row>
+            <p v-if="userNum >= 2">誰かが「{{userNum}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
+        </v-row> -->
+        <v-row>
+            <div v-for="un in userIterator" :key="un">
+                <userInfo v-if="userNum>=un" :userName="userNameList[un-1]" :averagePayment="averagePayment" @userPayEvent="calcTotalPayment"></userInfo>
+            </div>
         </v-row>
     </v-container>
 </template>
@@ -58,14 +57,32 @@ export default {
             userNameList: [],
         }
     },
-    methods:{
+    methods: {
         appendUser: function(){
             this.userNum++;
-            this.userNameList.append(this.appendedUserName);
+            this.userNameList.push(this.appendedUserName);
+            this.appendedUserName = "";
         },
         calcTotalPayment: function(payment_amount){
             this.totalPayment += payment_amount;
+            this.totalPayment = Number(this.totalPayment)
+        },
+    },
+    computed: {
+        averagePayment: function(){
+            return this.userNum===0 ? 0 : this.totalPayment/this.userNum;
+        },
+        userIterator: function(){
+            let range = [];
+            for(let i = 1; i <= this.userNum; i++){
+                range.push(i);
+            }
+            console.log(range);
+            return range;
+        },
+        mod: function(){
+            return this.userNum===0 ? 0 : this.totalPayment % this.userNum;
         }
-    }
+    },
 }
 </script>
