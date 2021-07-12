@@ -14,6 +14,7 @@
             <v-col>
                 <v-btn
                     @click="appendUser"
+                    :disabled="userNum>=10"
                     large
                     color="primary"
                     dark
@@ -22,17 +23,25 @@
                 </v-btn>
             </v-col>
         </v-row>
-        <v-row>
-            <p>{{ totalPayment }}</p>
+        <v-row>  
+            <p>総額：{{ totalPayment }}</p>
         </v-row>
-        <v-row id="id_users">
-            <userInfo id="id_test_test" style="display: table;" @userPayEvent="calcTotalPayment"></userInfo>
+        <v-row>
+            <p v-if="userNum >= 2">一人あたり：{{ averagePayment }}</p>
+        </v-row>
+        <!-- <v-row>
+            <p v-if="userNum >= 2">誰かが「{{userNum}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
+        </v-row> -->
+        <v-row>
+            <div v-for="un in userIterator" :key="un">
+                <userInfo v-if="userNum>=un" :userName="userNameList[un-1]" :averagePayment="averagePayment" @userPayEvent="calcTotalPayment"></userInfo>
+            </div>
         </v-row>
     </v-container>
 </template>
 
 <script>
-import Vue from 'vue';
+// import Vue from 'vue';
 import userInfo from './userInfo.vue';
 
 export default {
@@ -43,45 +52,37 @@ export default {
     data: function(){
         return{
             appendedUserName: "",
-            userNum: 1,
+            userNum: 0,
             totalPayment: 0,
+            userNameList: [],
         }
     },
-    methods:{
+    methods: {
         appendUser: function(){
-            // const div = document.createElement('div');
-            // const divHTML = '<userInfo id="id_user_' + this.userNum + '" @userPayEvent="calcTotalPayment"></userInfo>';
-            // div.innerHTML = divHTML;
-            // console.log(divHTML)
-            // div.innerHTML = '<userInfo id="id_user_1 @userPayEvent="calcTotalPayment"></userInfo>';
-            // document.getElementById('id_users').appendChild(div);
-            
-            const userComponent = Vue.extend(userInfo);
-            const instance = new userComponent({
-                template: '<userInfo id="id_user_1 @userPayEvent="calcTotalPayment"></userInfo>',
-                propsData: {
-                    userName: this.appendedUserName
-                },
-                parent: this
-            });
-            // instance.$mount("#user_" + this.userNum);
-            instance.$mount();
-            // document.getElementById('id_user_' + this.userNum).appendChild(instance.$el);
-            document.getElementById('id_users').appendChild(instance.$el);
-            // instance.$parent = document.getElementById("id_component_users")
-            console.log(this)
-            console.log(instance.$el)
-            
             this.userNum++;
+            this.userNameList.push(this.appendedUserName);
             this.appendedUserName = "";
-            // console.log(this.$parent.$el);
-            // console.log(instance);
-            // console.log(document.getElementById('id_component_users'));
-            // console.log(document.getElementById('id_user_1'))
         },
         calcTotalPayment: function(payment_amount){
             this.totalPayment += payment_amount;
+            this.totalPayment = Number(this.totalPayment)
+        },
+    },
+    computed: {
+        averagePayment: function(){
+            return this.userNum===0 ? 0 : this.totalPayment/this.userNum;
+        },
+        userIterator: function(){
+            let range = [];
+            for(let i = 1; i <= this.userNum; i++){
+                range.push(i);
+            }
+            console.log(range);
+            return range;
+        },
+        mod: function(){
+            return this.userNum===0 ? 0 : this.totalPayment % this.userNum;
         }
-    }
+    },
 }
 </script>

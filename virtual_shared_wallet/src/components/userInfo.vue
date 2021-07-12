@@ -55,12 +55,11 @@
 <script>
 export default {
     name: "userInfo",
-    props: ["userName"],
+    props: ["userName", "averagePayment"],
     data: function () {
         return {
             "userPayedAmount": 0,
             "paymentAmount": "",
-            "userSplitPayment": 0,
         };
     },
     methods: {
@@ -71,8 +70,11 @@ export default {
             this.userPayedAmount = Number(this.userPayedAmount);
         },
     },
-    // computed: {
-    // }
+    computed: {
+        userSplitPayment: function(){
+            return this.averagePayment - this.userPayedAmount;
+        }
+    }
 };
 </script>
 
