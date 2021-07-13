@@ -29,9 +29,10 @@
         <v-row>
             <p v-if="userNum >= 2">一人あたり：{{ averagePayment }}</p>
         </v-row>
-        <!-- <v-row>
-            <p v-if="userNum >= 2">誰かが「{{userNum}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
-        </v-row> -->
+        <v-row >
+            <p v-if="userNum >= 2 && hasFraction">誰かが「{{userNum}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
+            <p v-if="userNum >= 2 && !hasFraction">端数はありません</p>
+        </v-row>
         <v-row>
             <div v-for="un in userIterator" :key="un">
                 <userInfo v-if="userNum>=un" :userName="userNameList[un-1]" :averagePayment="averagePayment" @userPayEvent="calcTotalPayment"></userInfo>
@@ -57,6 +58,24 @@ export default {
             userNameList: [],
         }
     },
+    computed: {
+        averagePayment: function(){
+            return this.userNum===0 ? 0 : this.totalPayment/this.userNum;
+        },
+        userIterator: function(){
+            let range = [];
+            for(let i = 1; i <= this.userNum; i++){
+                range.push(i);
+            }
+            return range;
+        },
+        mod: function(){
+            return this.userNum - (this.totalPayment % this.userNum);
+        },
+        hasFraction: function(){
+            return (this.totalPayment % this.userNum !== 0)
+        }
+    },
     methods: {
         appendUser: function(){
             this.userNum++;
@@ -67,22 +86,6 @@ export default {
             this.totalPayment += payment_amount;
             this.totalPayment = Number(this.totalPayment)
         },
-    },
-    computed: {
-        averagePayment: function(){
-            return this.userNum===0 ? 0 : this.totalPayment/this.userNum;
-        },
-        userIterator: function(){
-            let range = [];
-            for(let i = 1; i <= this.userNum; i++){
-                range.push(i);
-            }
-            console.log(range);
-            return range;
-        },
-        mod: function(){
-            return this.userNum===0 ? 0 : this.totalPayment % this.userNum;
-        }
     },
 }
 </script>
