@@ -6,7 +6,7 @@
         rounded=true
         >
         <v-container>
-            <v-row>
+            <v-row class="px-3 pt-3" id="userName">
                 <span>{{ userName }}</span>
             </v-row>
             <v-row class="mb-0 pb-0">
@@ -29,13 +29,12 @@
                         dark
                         @click="add_paymentAmount"
                     >
-                        <!-- <v-icon>mdi-cash-multiple</v-icon> -->
                         <v-img src="./../assets/支払い加算.png" width=25 height=25 contain></v-img>
                     </v-btn>
                 </v-col>
             </v-row>
             <v-row class="my-0 py-0">
-                <v-col class="mb-0 pb-0">
+                <v-col class="my-0 py-0">
                     <span>累計支払金額：{{ userPayedAmount }}</span>
                 </v-col>
             </v-row>
@@ -62,19 +61,19 @@ export default {
             "paymentAmount": "",
         };
     },
-    methods: {
-        add_paymentAmount: function(){
-            this.userPayedAmount += this.paymentAmount;
-            this.$emit("userPayEvent", this.paymentAmount);
-            this.paymentAmount = "";
-            this.userPayedAmount = Number(this.userPayedAmount);
-        },
-    },
     computed: {
         userSplitPayment: function(){
             return this.averagePayment - this.userPayedAmount;
-        }
-    }
+        },
+    },
+    methods: {
+        add_paymentAmount: function(){
+            const integerPaymentAmount = Math.floor(this.paymentAmount);
+            this.userPayedAmount += integerPaymentAmount;
+            this.$emit("userPayEvent", integerPaymentAmount);
+            this.paymentAmount = "";
+        },
+    },
 };
 </script>
 
@@ -87,6 +86,11 @@ export default {
 }
 .class_just {
     color: #888;
+    font-weight: bold;
+}
+
+#userName {
+    font-size: 20px;
     font-weight: bold;
 }
 
