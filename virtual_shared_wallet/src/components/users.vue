@@ -6,17 +6,16 @@
                     type="text"
                     v-model="appendedUserName"
                     label="登録するユーザーの名前"
-                    solo
+                    filled
                     placeholder="割勘 太郎"
                     height="40px"
-                >
-                </v-text-field>
+                ></v-text-field>
             </v-col>
             <v-col>
                 <v-btn
                     @click="appendUser"
                     :disabled="appendedUserName===''"
-                    large
+                    x-large
                     color="primary"
                 >
                     <v-icon>mdi-account-plus</v-icon>
@@ -35,20 +34,36 @@
         </v-row>
         <v-row>
             <div v-for="un in userIterator" :key="un">
-                <userInfo v-if="userNum>=un" :userName="userNameList[un-1]" :averagePayment="averagePayment" @userPayEvent="calcTotalPayment"></userInfo>
+                <userInfo
+                    v-if="userNum>=un"
+                    :userName="userNameList[un-1]"
+                    :averagePayment="averagePayment"
+                    :userPayedAmount="paymentList[un-1]"
+                    @userPayEvent="calcTotalPayment"
+                ></userInfo>
             </div>
+        </v-row>
+        <v-row>
+            <repayment
+                v-if="userNum >= 2"
+                :userNameList="userNameList"
+                @repaymentEvent="calcRepayment"
+            >
+            </repayment>
         </v-row>
     </v-container>
 </template>
 
 <script>
-// import Vue from 'vue';
-import userInfo from './userInfo.vue';
+import Vue from 'vue';
+import userInfo from "./userInfo.vue";
+import repayment from "./repayment.vue";
 
 export default {
     name: "users",
     components: {
-        userInfo
+        userInfo,
+        repayment,
     },
     data: function(){
         return{
@@ -56,6 +71,7 @@ export default {
             userNum: 0,
             totalPayment: 0,
             userNameList: [],
+            paymentList: [],
         }
     },
     computed: {
@@ -80,12 +96,23 @@ export default {
         appendUser: function(){
             this.userNum++;
             this.userNameList.push(this.appendedUserName);
+            this.paymentList.push(0);
             this.appendedUserName = "";
         },
-        calcTotalPayment: function(payment_amount){
-            this.totalPayment += payment_amount;
-            this.totalPayment = Number(this.totalPayment)
+        calcTotalPayment: function(paymentInfo){
+            const paymentUserNum = this.userNameList.indexOf(paymentInfo.name);
+            this.paymentList[paymentUserNum] += paymentInfo.amount;
+            this.totalPayment += paymentInfo.amount;
+            this.totalPayment = Number(this.totalPayment);
         },
+        calcRepayment: function(repaymentInfo){
+            const payerIndex = this.userNameList.indexOf(repaymentInfo.payer);
+            const receiverIndex = this.userNameList.indexOf(repaymentInfo.receiver);
+            // this.paymentList[payerIndex] += repaymentInfo.amount;
+            // this.paymentList[receiverIndex] -= repaymentInfo.amount;
+            Vue.set(this.paymentList, payerIndex, this.paymentList[payerIndex]+repaymentInfo.amount);
+            Vue.set(this.paymentList, receiverIndex, this.paymentList[receiverIndex]-repaymentInfo.amount);
+        }
     },
 }
 </script>

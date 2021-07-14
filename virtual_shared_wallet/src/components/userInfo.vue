@@ -6,7 +6,7 @@
         rounded=true
         >
         <v-container>
-            <v-row class="px-3 pt-3" id="userName">
+            <v-row class="px-3 pt-3" id="id_userName">
                 <span>{{ userName }}</span>
             </v-row>
             <v-row class="mb-0 pb-0">
@@ -27,7 +27,7 @@
                         color="warning"
                         fab
                         dark
-                        @click="add_paymentAmount"
+                        @click="addPaymentAmount"
                     >
                         <v-img src="./../assets/支払い加算.png" width=25 height=25 contain></v-img>
                     </v-btn>
@@ -54,10 +54,9 @@
 <script>
 export default {
     name: "userInfo",
-    props: ["userName", "averagePayment"],
+    props: ["userName", "averagePayment", "userPayedAmount"],
     data: function () {
         return {
-            "userPayedAmount": 0,
             "paymentAmount": "",
         };
     },
@@ -67,10 +66,12 @@ export default {
         },
     },
     methods: {
-        add_paymentAmount: function(){
+        addPaymentAmount: function(){
             const integerPaymentAmount = Math.floor(this.paymentAmount);
-            this.userPayedAmount += integerPaymentAmount;
-            this.$emit("userPayEvent", integerPaymentAmount);
+            this.$emit("userPayEvent", {
+                name: this.userName,
+                amount: integerPaymentAmount,
+            });
             this.paymentAmount = "";
         },
     },
@@ -89,7 +90,7 @@ export default {
     font-weight: bold;
 }
 
-#userName {
+#id_userName {
     font-size: 20px;
     font-weight: bold;
 }
