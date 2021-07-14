@@ -86,10 +86,10 @@ export default {
             return range;
         },
         mod: function(){
-            return this.userNum - (this.totalPayment % this.userNum);
+            return this.userNum != 0 ? this.userNum - (this.totalPayment % this.userNum) : 0;
         },
         hasFraction: function(){
-            return (this.totalPayment % this.userNum !== 0)
+            return (this.totalPayment % this.userNum) !== 0
         },
         multiUsers: function(){
             return this.userNum >= 2 ? true : false;
@@ -111,8 +111,6 @@ export default {
         calcRepayment: function(repaymentInfo){
             const payerIndex = this.userNameList.indexOf(repaymentInfo.payer);
             const receiverIndex = this.userNameList.indexOf(repaymentInfo.receiver);
-            // this.paymentList[payerIndex] += repaymentInfo.amount;
-            // this.paymentList[receiverIndex] -= repaymentInfo.amount;
             Vue.set(this.paymentList, payerIndex, this.paymentList[payerIndex]+repaymentInfo.amount);
             Vue.set(this.paymentList, receiverIndex, this.paymentList[receiverIndex]-repaymentInfo.amount);
         },
