@@ -23,14 +23,14 @@
             </v-col>
         </v-row>
         <v-row>  
-            <p>総額：{{ totalPayment }}</p>
+            <p :class="{ disabledContent: !multiUsers }">総額：{{ totalPayment }}</p>
         </v-row>
         <v-row>
-            <p v-if="userNum >= 2">一人あたり：{{ averagePayment }}</p>
+            <p :class="{ disabledContent: !multiUsers }">一人あたり：{{ averagePayment }}</p>
         </v-row>
         <v-row >
-            <p v-if="userNum >= 2 && hasFraction">誰かが「{{userNum}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
-            <p v-if="userNum >= 2 && !hasFraction">端数はありません</p>
+            <p v-if="hasFraction"  :class="{ disabledContent: !multiUsers }">誰かが「{{userNum}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
+            <p v-if="!hasFraction" :class="{ disabledContent: !multiUsers }">端数はありません</p>
         </v-row>
         <v-row>
             <div v-for="un in userIterator" :key="un">
@@ -90,7 +90,10 @@ export default {
         },
         hasFraction: function(){
             return (this.totalPayment % this.userNum !== 0)
-        }
+        },
+        multiUsers: function(){
+            return this.userNum >= 2 ? true : false;
+        },
     },
     methods: {
         appendUser: function(){
@@ -116,3 +119,10 @@ export default {
     },
 }
 </script>
+
+<style>
+.disabledContent{
+    color: #aaa;
+}
+</style>
+

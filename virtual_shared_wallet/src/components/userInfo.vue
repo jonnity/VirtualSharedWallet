@@ -86,7 +86,7 @@ export default {
     color: red;
 }
 .class_just {
-    color: #888;
+    color: #666;
     font-weight: bold;
 }
 
