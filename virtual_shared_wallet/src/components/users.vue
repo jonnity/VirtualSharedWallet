@@ -112,7 +112,7 @@ export default {
             // this.paymentList[receiverIndex] -= repaymentInfo.amount;
             Vue.set(this.paymentList, payerIndex, this.paymentList[payerIndex]+repaymentInfo.amount);
             Vue.set(this.paymentList, receiverIndex, this.paymentList[receiverIndex]-repaymentInfo.amount);
-        }
+        },
     },
 }
 </script>

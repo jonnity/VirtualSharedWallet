@@ -31,6 +31,7 @@
                 <v-btn
                     @click="repayment"
                     color="warning"
+                    x-large
                 >
                     <v-icon color="black">mdi-cash-refund</v-icon>
                 </v-btn>
