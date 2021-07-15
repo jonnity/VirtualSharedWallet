@@ -29,8 +29,8 @@
             <p :class="{ disabledContent: !multiUsers }">一人あたり：{{ averagePayment }}</p>
         </v-row>
         <v-row >
-            <p v-if="hasFraction"  :class="{ disabledContent: !multiUsers }">誰かが「{{userNum}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
-            <p v-if="!hasFraction" :class="{ disabledContent: !multiUsers }">端数はありません</p>
+            <p v-if="userNum >= 2 && hasFraction"  :class="{ disabledContent: !multiUsers }">誰かが「{{userNum}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
+            <p v-if="userNum < 2 || !hasFraction" :class="{ disabledContent: !multiUsers }">端数はありません</p>
         </v-row>
         <v-row>
             <div v-for="un in userIterator" :key="un">
@@ -65,7 +65,7 @@ export default {
         userInfo,
         repayment,
     },
-    data: function(){
+    data(){
         return{
             appendedUserName: "",
             userNum: 0,
@@ -86,10 +86,10 @@ export default {
             return range;
         },
         mod: function(){
-            return this.userNum - (this.totalPayment % this.userNum);
+            return this.userNum != 0 ? this.userNum - (this.totalPayment % this.userNum) : 0;
         },
         hasFraction: function(){
-            return (this.totalPayment % this.userNum !== 0)
+            return (this.totalPayment % this.userNum) !== 0
         },
         multiUsers: function(){
             return this.userNum >= 2 ? true : false;
@@ -111,8 +111,6 @@ export default {
         calcRepayment: function(repaymentInfo){
             const payerIndex = this.userNameList.indexOf(repaymentInfo.payer);
             const receiverIndex = this.userNameList.indexOf(repaymentInfo.receiver);
-            // this.paymentList[payerIndex] += repaymentInfo.amount;
-            // this.paymentList[receiverIndex] -= repaymentInfo.amount;
             Vue.set(this.paymentList, payerIndex, this.paymentList[payerIndex]+repaymentInfo.amount);
             Vue.set(this.paymentList, receiverIndex, this.paymentList[receiverIndex]-repaymentInfo.amount);
         },
@@ -120,9 +118,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .disabledContent{
     color: #aaa;
 }
 </style>
-

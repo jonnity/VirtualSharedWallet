@@ -61,10 +61,11 @@ export default {
                 receiver: this.receiver,
                 amount: integerPaymentAmount,
             });
+            this.paymentAmount = "";
         },
     },
 };
 </script>
 
-<style>
+<style scoped>
 </style>
