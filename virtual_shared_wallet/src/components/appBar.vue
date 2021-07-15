@@ -13,10 +13,11 @@
             <v-toolbar-title>VirtualSharedWallet</v-toolbar-title>
             <v-tabs v-if="!($vuetify.breakpoint.sm || $vuetify.breakpoint.xs)">
                 <v-tab
-                    v-for="menuItem in menuList"
-                    :key="menuItem"
+                    v-for="(menuName, menuUrl) in menuList"
+                    :key="menuName"
+                    :to="menuUrl"
                 >
-                    {{ menuItem }}
+                    {{ menuItem.name }}
                 </v-tab>
             </v-tabs>
 
@@ -54,11 +55,18 @@ export default ({
     data(){
         return {
             drawer: false,
-            menuList: [
-                "ユーザー追加",
-                "受け渡し",
-                "投げ銭",
-            ],
+            menuList: [{
+                name: "ユーザー追加",
+                url: "/appendUser",
+            },
+            {
+                name: "受け渡し",
+                url: "/repay",
+            },
+            {
+                name: "投げ銭",
+                url: "/tipping",
+            }],
         };
     },
 });
