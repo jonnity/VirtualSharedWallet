@@ -9,7 +9,7 @@
             "name": "Run npm",
             "request": "launch",
             "type": "node-terminal",
-            "cwd": "${workspaceFolder}/virtual_shared_wallet"
+            "cwd": "${workspaceFolder}/wa_warikan"
         }
     ]
 }

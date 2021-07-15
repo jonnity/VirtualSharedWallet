@@ -10,7 +10,7 @@
                 @click="drawer = true"
                 v-if="($vuetify.breakpoint.sm || $vuetify.breakpoint.xs)"
             ></v-app-bar-nav-icon>
-            <v-toolbar-title>VirtualSharedWallet</v-toolbar-title>
+            <v-toolbar-title>和割勘</v-toolbar-title>
             <v-tabs v-if="!($vuetify.breakpoint.sm || $vuetify.breakpoint.xs)">
                 <v-tab
                     v-for="menuItem in menuList"
