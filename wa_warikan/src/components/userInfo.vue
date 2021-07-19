@@ -35,7 +35,7 @@
             </v-row>
             <v-row class="my-0 py-0">
                 <v-col class="my-0 py-0">
-                    <span>累計支払金額：{{ userPayedAmount }}</span>
+                    <span>累計支払金額：{{ userPayedAmount | floorToTenths }}</span>
                 </v-col>
             </v-row>
             <v-row class="my-0 py-0">
@@ -43,7 +43,7 @@
                     <span
                         v-bind:class="userSplitPayment>0 ? 'class_profit' : userSplitPayment<0 ? 'class_loss' : 'class_just'"
                         >
-                        調整金額：{{ userSplitPayment }}
+                        調整金額：{{ userSplitPayment | floorToTenths }}
                     </span>
                 </v-col>
             </v-row>
@@ -73,6 +73,12 @@ export default {
                 amount: integerPaymentAmount,
             });
             this.paymentAmount = "";
+        },
+    },
+    filters: {
+        floorToTenths: function(number){
+            // 小数点第一位まで残して切り捨て
+            return Math.floor(number*10)/10;
         },
     },
 };

@@ -4,7 +4,7 @@
             <v-col>
                 <v-text-field
                     type="text"
-                    v-model="appendedUserName"
+                    v-model="inputtedUserName"
                     label="登録するユーザーの名前"
                     filled
                     placeholder="割勘 太郎"
@@ -14,7 +14,7 @@
             <v-col>
                 <v-btn
                     @click="appendUser"
-                    :disabled="appendedUserName===''"
+                    :disabled="inputtedUserName===''"
                     x-large
                     color="primary"
                 >
@@ -67,14 +67,16 @@ export default {
     },
     data(){
         return{
-            appendedUserName: "",
-            userNum: 0,
+            inputtedUserName: "",
             totalPayment: 0,
             userNameList: [],
             paymentList: [],
         }
     },
     computed: {
+        userNum: function(){
+            return this.userNameList.length;
+        },
         averagePayment: function(){
             return this.userNum===0 ? 0 : this.totalPayment/this.userNum;
         },
@@ -97,14 +99,23 @@ export default {
     },
     methods: {
         appendUser: function(){
-            this.userNum++;
-            this.userNameList.push(this.appendedUserName);
+            let appendedUserName = this.inputtedUserName;
+            const _this = this;
+            const sameNames = this.userNameList.filter(function(name){return (name === _this.inputtedUserName)});
+            const sameNameMenberNum = sameNames.length;
+            if(sameNameMenberNum > 0){
+                appendedUserName = this.inputtedUserName + "_" + (sameNameMenberNum+1); 
+            }
+            console.log(sameNames);
+            console.log(appendedUserName);
+            this.userNameList.push(appendedUserName);
             this.paymentList.push(0);
-            this.appendedUserName = "";
+
+            this.inputtedUserName = "";
         },
         calcTotalPayment: function(paymentInfo){
-            const paymentUserNum = this.userNameList.indexOf(paymentInfo.name);
-            this.paymentList[paymentUserNum] += paymentInfo.amount;
+            const paymentUserIndex = this.userNameList.indexOf(paymentInfo.name);
+            this.paymentList[paymentUserIndex] += paymentInfo.amount;
             this.totalPayment += paymentInfo.amount;
             this.totalPayment = Number(this.totalPayment);
         },
