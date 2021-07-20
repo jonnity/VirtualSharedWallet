@@ -4,13 +4,13 @@
         color="#FFF9C4"
         elevation="6"
         rounded=true
-        >
+    >
         <v-container>
-            <v-row class="px-3 pt-3" id="id_userName">
+            <v-row class="ma-1" id="id_userName">
                 <span>{{ userName }}</span>
             </v-row>
-            <v-row class="mb-0 pb-0">
-                <v-col class="mb-0 pb-0">
+            <v-row class="ml-1" align="center">
+                <v-col class="pa-1">
                     <v-text-field
                         type="number"
                         v-model.number="paymentAmount"
@@ -18,10 +18,11 @@
                         label="支払金額"
                         dence
                         solo
+                        hide-details
                     >
                     </v-text-field>
                 </v-col>
-                <v-col class="mb-0 pb-0">
+                <v-col class="pa-1">
                     <v-btn
                         small
                         color="warning"
@@ -33,16 +34,16 @@
                     </v-btn>
                 </v-col>
             </v-row>
-            <v-row class="my-0 py-0">
-                <v-col class="my-0 py-0">
+            <v-row class="ml-1">
+                <v-col class="pa-1">
                     <span>累計支払金額：{{ userPayedAmount | floorToTenths }}</span>
                 </v-col>
             </v-row>
-            <v-row class="my-0 py-0">
-                <v-col class="my-0 py-0">
+            <v-row class="ml-1">
+                <v-col class="pa-1 mb-3">
                     <span
                         v-bind:class="userSplitPayment>0 ? 'class_profit' : userSplitPayment<0 ? 'class_loss' : 'class_just'"
-                        >
+                    >
                         調整金額：{{ userSplitPayment | floorToTenths }}
                     </span>
                 </v-col>

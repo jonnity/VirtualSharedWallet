@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-row align="start">
+        <v-row align="center">
             <v-col>
                 <v-text-field
                     type="text"
@@ -9,13 +9,14 @@
                     filled
                     placeholder="割勘 太郎"
                     height="40px"
+                    hide-details
                 ></v-text-field>
             </v-col>
             <v-col>
                 <v-btn
                     @click="appendUser"
                     :disabled="inputtedUserName===''"
-                    x-large
+                    large
                     color="primary"
                 >
                     <v-icon>mdi-account-plus</v-icon>
