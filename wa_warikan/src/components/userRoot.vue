@@ -1,62 +1,26 @@
 <template>
     <v-container>
-        <v-row align="center">
-            <v-col>
-                <userTextField
-                    :modelValue="inputtedUserName"
-                    @update:model="inputtedUserName=$event"
-                >
-
-                </userTextField>
-                <!-- <v-text-field
-                    type="text"
-                    v-model="inputtedUserName"
-                    label="登録するユーザーの名前"
-                    filled
-                    placeholder="割勘 太郎"
-                    height="40px"
-                    hide-details
-                ></v-text-field> -->
-            </v-col>
-            <v-col>
-                <v-btn
-                    @click="appendUser"
-                    :disabled="inputtedUserName===''"
-                    large
-                    color="primary"
-                >
-                    <v-icon>mdi-account-plus</v-icon>
-                </v-btn>
-            </v-col>
-        </v-row>
-        <v-row>  
-            <p :class="{ disabledContent: !multiUsers }">総額：{{ totalPayment }}</p>
-        </v-row>
-        <v-row>
-            <p :class="{ disabledContent: !multiUsers }">一人あたり：{{ averagePayment }}</p>
-        </v-row>
-        <v-row >
-            <p v-if="userNum >= 2 && hasFraction"  :class="{ disabledContent: !multiUsers }">誰かが「{{userNum}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
-            <p v-if="userNum < 2 || !hasFraction" :class="{ disabledContent: !multiUsers }">端数はありません</p>
-        </v-row>
+        <appendUserForm
+            :userNameList="userNameList"
+            @appendUserEvent="appendUser"
+        ></appendUserForm>
+        <repaymentForm
+            :userNameList="userNameList"
+            @repaymentEvent="calcRepayment"
+        ></repaymentForm>
+        <p :class="{ disabledContent: userNameList.length < 2 }">総額：{{ totalPayment }}</p>
+        <p :class="{ disabledContent: userNameList.length < 2 }">一人あたり：{{ averagePayment }}</p>
+        <p v-if="userNameList.length >= 2 && hasFraction"  :class="{ disabledContent: userNameList.length < 2 }">誰かが「{{userNameList.length}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
+        <p v-if="userNameList.length < 2 || !hasFraction" :class="{ disabledContent: userNameList.length < 2 }">端数はありません</p>
         <v-row>
             <div v-for="un in userIterator" :key="un">
                 <userInfo
-                    v-if="userNum>=un"
                     :userName="userNameList[un-1]"
-                    :averagePayment="averagePayment"
                     :userPayedAmount="paymentList[un-1]"
+                    :averagePayment="averagePayment"
                     @userPayEvent="calcTotalPayment"
                 ></userInfo>
             </div>
-        </v-row>
-        <v-row>
-            <repayment
-                v-if="userNum >= 2"
-                :userNameList="userNameList"
-                @repaymentEvent="calcRepayment"
-            >
-            </repayment>
         </v-row>
     </v-container>
 </template>
@@ -64,63 +28,45 @@
 <script>
 import Vue from 'vue';
 import userInfo from "./userInfo.vue";
-import repayment from "./repayment.vue";
-import userTextField from "./userTextField.vue"
+import repaymentForm from "./repaymentForm.vue";
+import appendUserForm from './appendUserForm.vue';
 
 export default {
     name: "userRoot",
     components: {
         userInfo,
-        repayment,
-        userTextField,
+        repaymentForm,
+        appendUserForm,
     },
     data(){
         return{
-            inputtedUserName: "",
             totalPayment: 0,
             userNameList: [],
             paymentList: [],
         }
     },
     computed: {
-        userNum: function(){
-            return this.userNameList.length;
-        },
         averagePayment: function(){
-            return this.userNum===0 ? 0 : this.totalPayment/this.userNum;
+            return this.userNameList.length===0 ? 0 : this.totalPayment/this.userNameList.length;
         },
         userIterator: function(){
             let range = [];
-            for(let i = 1; i <= this.userNum; i++){
+            for(let i = 1; i <= this.userNameList.length; i++){
                 range.push(i);
             }
             return range;
         },
         mod: function(){
-            return this.userNum != 0 ? this.userNum - (this.totalPayment % this.userNum) : 0;
+            return this.userNameList.length != 0 ? this.userNameList.length - (this.totalPayment % this.userNameList.length) : 0;
         },
         hasFraction: function(){
-            return (this.totalPayment % this.userNum) !== 0
-        },
-        multiUsers: function(){
-            return this.userNum >= 2 ? true : false;
+            return (this.totalPayment % this.userNameList.length) !== 0
         },
     },
     methods: {
-        appendUser: function(){
-            let appendedUserName = this.inputtedUserName;
-            const _this = this;
-            const sameNames = this.userNameList.filter(function(name){return (name === _this.inputtedUserName)});
-            const sameNameMenberNum = sameNames.length;
-            if(sameNameMenberNum > 0){
-                appendedUserName = this.inputtedUserName + "_" + (sameNameMenberNum+1); 
-            }
-            console.log(sameNames);
-            console.log(appendedUserName);
+        appendUser: function(appendedUserName){
             this.userNameList.push(appendedUserName);
             this.paymentList.push(0);
-
-            this.inputtedUserName = "";
         },
         calcTotalPayment: function(paymentInfo){
             const paymentUserIndex = this.userNameList.indexOf(paymentInfo.name);

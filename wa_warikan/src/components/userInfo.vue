@@ -11,16 +11,9 @@
             </v-row>
             <v-row class="ml-1" align="center">
                 <v-col class="pa-1">
-                    <v-text-field
-                        type="number"
+                    <moneyTextField
                         v-model.number="paymentAmount"
-                        prefix="￥"
-                        label="支払金額"
-                        dence
-                        solo
-                        hide-details
-                    >
-                    </v-text-field>
+                    ></moneyTextField>
                 </v-col>
                 <v-col class="pa-1">
                     <v-btn
@@ -53,12 +46,12 @@
 </template>
 
 <script>
-import userTextField from './userTextField.vue';
+import moneyTextField from './moneyTextField.vue';
 
 export default {
     name: "userInfo",
-    component: {
-        userTextField,
+    components: {
+        moneyTextField,
     },
     props: ["userName", "averagePayment", "userPayedAmount"],
     data: function () {
@@ -105,14 +98,5 @@ export default {
 #id_userName {
     font-size: 20px;
     font-weight: bold;
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-input[type="number"] {
-    -moz-appearance:textfield;
 }
 </style>
