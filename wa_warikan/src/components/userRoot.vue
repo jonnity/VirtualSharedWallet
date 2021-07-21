@@ -2,7 +2,13 @@
     <v-container>
         <v-row align="center">
             <v-col>
-                <v-text-field
+                <userTextField
+                    :modelValue="inputtedUserName"
+                    @update:model="inputtedUserName=$event"
+                >
+
+                </userTextField>
+                <!-- <v-text-field
                     type="text"
                     v-model="inputtedUserName"
                     label="登録するユーザーの名前"
@@ -10,7 +16,7 @@
                     placeholder="割勘 太郎"
                     height="40px"
                     hide-details
-                ></v-text-field>
+                ></v-text-field> -->
             </v-col>
             <v-col>
                 <v-btn
@@ -59,12 +65,14 @@
 import Vue from 'vue';
 import userInfo from "./userInfo.vue";
 import repayment from "./repayment.vue";
+import userTextField from "./userTextField.vue"
 
 export default {
-    name: "users",
+    name: "userRoot",
     components: {
         userInfo,
         repayment,
+        userTextField,
     },
     data(){
         return{

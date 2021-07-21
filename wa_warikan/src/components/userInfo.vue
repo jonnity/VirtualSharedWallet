@@ -53,8 +53,13 @@
 </template>
 
 <script>
+import userTextField from './userTextField.vue';
+
 export default {
     name: "userInfo",
+    component: {
+        userTextField,
+    },
     props: ["userName", "averagePayment", "userPayedAmount"],
     data: function () {
         return {

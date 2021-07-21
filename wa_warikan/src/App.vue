@@ -2,18 +2,18 @@
   <v-app>
     <appBar></appBar>
     <div class="ma-8"></div>
-    <users id="id_component_users"></users>
+    <userRoot></userRoot>
   </v-app>
 </template>
 
 <script>
-import users from "./components/users.vue"
+import userRoot from "./components/userRoot.vue"
 import appBar from "./components/appBar.vue"
 
 export default {
   name: "App",
   components: {
-    users,
+    userRoot,
     appBar,
   },
   data: () => ({
