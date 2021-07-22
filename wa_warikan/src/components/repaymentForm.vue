@@ -1,14 +1,14 @@
 <template>
     <v-container>
+        <p
+            v-if="userNameList.length < 2"
+        >
+            ユーザーを追加してください
+        </p>
         <v-row>
-            <v-text-field
-                type="number"
+            <moneyTextField
                 v-model.number="paymentAmount"
-                prefix="￥"
-                label="支払金額"
-                dence
-                solo
-            ></v-text-field>
+            ></moneyTextField>
         </v-row>
         <v-row>
             <v-col>
@@ -17,6 +17,7 @@
                     v-model="payer"
                     filled
                     label="払う人"
+                    hide-details
                 ></v-select>
             </v-col>
             <v-col>
@@ -25,13 +26,15 @@
                     v-model="receiver"
                     filled
                     label="受け取る人"
+                    hide-details
                 ></v-select>
             </v-col>
-            <v-col cols=2>
+            <v-col>
                 <v-btn
                     @click="repayment"
                     color="warning"
                     x-large
+                    :disabled="!readyToRepayment"
                 >
                     <v-icon color="black">mdi-cash-refund</v-icon>
                 </v-btn>
@@ -41,8 +44,12 @@
 </template>
 
 <script>
+import moneyTextField from "./moneyTextField.vue"
 export default {
-    name: "repayment",
+    name: "repaymentForm",
+    components: {
+        moneyTextField,
+    },
     props: ["userNameList"],
     data: function () {
         return {
@@ -52,6 +59,12 @@ export default {
         };
     },
     computed: {
+        readyToRepayment: function(){
+            const amountInputted = this.paymentAmount != "";
+            const nameInputted = this.payer != "" && this.receiver != "";
+            const nameDifference = this.payer != this.receiver;
+            return amountInputted && nameInputted && nameDifference;
+        }
     },
     methods: {
         repayment: function(){
@@ -62,6 +75,8 @@ export default {
                 amount: integerPaymentAmount,
             });
             this.paymentAmount = "";
+            this.payer = "";
+            this.receiver = "";
         },
     },
 };
