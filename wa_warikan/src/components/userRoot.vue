@@ -1,18 +1,13 @@
 <template>
     <v-container>
-        <appendUserForm
+        <appBar
             :userNameList="userNameList"
+            :paymentList="paymentList"
             @appendUserEvent="appendUser"
-        ></appendUserForm>
-        <repaymentForm
-            :userNameList="userNameList"
             @repaymentEvent="calcRepayment"
-        ></repaymentForm>
-        <p :class="{ disabledContent: userNameList.length < 2 }">総額：{{ totalPayment }}</p>
-        <p :class="{ disabledContent: userNameList.length < 2 }">一人あたり：{{ averagePayment }}</p>
-        <p v-if="userNameList.length >= 2 && hasFraction"  :class="{ disabledContent: userNameList.length < 2 }">誰かが「{{userNameList.length}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
-        <p v-if="userNameList.length < 2 || !hasFraction" :class="{ disabledContent: userNameList.length < 2 }">端数はありません</p>
-        <v-row>
+        ></appBar>
+
+        <v-row class="pa-2">
             <div v-for="un in userIterator" :key="un">
                 <userInfo
                     :userName="userNameList[un-1]"
@@ -22,21 +17,29 @@
                 ></userInfo>
             </div>
         </v-row>
+        <div class="pa-6">
+            <p :class="{ disabledContent: userNameList.length < 2 }">総額：{{ totalPayment }}</p>
+            <p :class="{ disabledContent: userNameList.length < 2 }">一人あたり：{{ averagePayment }}</p>
+            <p v-if="userNameList.length >= 2 && hasFraction"  :class="{ disabledContent: userNameList.length < 2 }">誰かが「{{userNameList.length}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
+            <p v-if="userNameList.length < 2 || !hasFraction" :class="{ disabledContent: userNameList.length < 2 }">端数はありません</p>
+        </div>
     </v-container>
 </template>
 
 <script>
 import Vue from 'vue';
 import userInfo from "./userInfo.vue";
-import repaymentForm from "./repaymentForm.vue";
-import appendUserForm from './appendUserForm.vue';
+import appBar from "./appBar.vue"
+// import repaymentForm from "../routingContents/repaymentForm.vue";
+// import appendUserForm from '../routingContents/appendUserForm.vue';
 
 export default {
     name: "userRoot",
     components: {
         userInfo,
-        repaymentForm,
-        appendUserForm,
+        appBar,
+        // repaymentForm,
+        // appendUserForm,
     },
     data(){
         return{
