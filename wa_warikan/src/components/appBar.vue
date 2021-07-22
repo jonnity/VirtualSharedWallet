@@ -49,8 +49,12 @@
                 </v-list>
             </v-navigation-drawer>
         </header>
-        <div class="ma-12"></div>
-        <router-view></router-view>
+        <div class="pa-6"></div>
+        <router-view
+            :userNameList="userNameList"
+            @appendUserEvent="appendEvent"
+            @repaymentEvent="repaymentEvent"
+        ></router-view>
     </div>
 </template>
 
@@ -74,6 +78,15 @@ export default ({
             }],
         };
     },
+    props: ["userNameList", "paymentList"],
+    methods: {
+        appendEvent: function(appendedUserName){
+            this.$emit("appendUserEvent", appendedUserName);
+        },
+        repaymentEvent: function(repaymentInfo){
+            this.$emit("repaymentEvent", repaymentInfo);
+        }
+    }
 });
 </script>
 

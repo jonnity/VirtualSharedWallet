@@ -1,45 +1,50 @@
 <template>
     <v-container>
-        <!-- <p
+        <div
             v-if="userNameList.length < 2"
+            id="id_user_shortage"
         >
-            ユーザーを追加してください
-        </p> -->
-        <v-row>
-            <moneyTextField
-                v-model.number="paymentAmount"
-            ></moneyTextField>
-        </v-row>
-        <v-row>
-            <v-col>
-                <v-select
-                    :items="userNameList"
-                    v-model="payer"
-                    filled
-                    label="払う人"
-                    hide-details
-                ></v-select>
-            </v-col>
-            <v-col>
-                <v-select
-                    :items="userNameList"
-                    v-model="receiver"
-                    filled
-                    label="受け取る人"
-                    hide-details
-                ></v-select>
-            </v-col>
-            <v-col>
-                <v-btn
-                    @click="repayment"
-                    color="warning"
-                    x-large
-                    :disabled="!readyToRepayment"
-                >
-                    <v-icon color="black">mdi-cash-refund</v-icon>
-                </v-btn>
-            </v-col>
-        </v-row>
+                <p>受け渡し機能を使うには2人以上のユーザーを追加してください</p>
+        </div>
+        <div
+            v-if="userNameList.length >= 2"
+        >
+            <v-row class="pa-3">
+                <moneyTextField
+                    v-model.number="paymentAmount"
+                ></moneyTextField>
+            </v-row>
+            <v-row>
+                <v-col>
+                    <v-select
+                        :items="userNameList"
+                        v-model="payer"
+                        filled
+                        label="払う人"
+                        hide-details
+                    ></v-select>
+                </v-col>
+                <v-col>
+                    <v-select
+                        :items="userNameList"
+                        v-model="receiver"
+                        filled
+                        label="受け取る人"
+                        hide-details
+                    ></v-select>
+                </v-col>
+                <v-col>
+                    <v-btn
+                        @click="repayment"
+                        color="warning"
+                        x-large
+                        :disabled="!readyToRepayment"
+                    >
+                        <v-icon color="black">mdi-cash-refund</v-icon>
+                    </v-btn>
+                </v-col>
+            </v-row>
+        </div>
     </v-container>
 </template>
 
@@ -83,4 +88,7 @@ export default {
 </script>
 
 <style scoped>
+#id_user_shortage{
+    font-weight: bold;
+}
 </style>
