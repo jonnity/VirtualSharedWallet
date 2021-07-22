@@ -1,10 +1,10 @@
 <template>
     <v-container>
-        <p
+        <!-- <p
             v-if="userNameList.length < 2"
         >
             ユーザーを追加してください
-        </p>
+        </p> -->
         <v-row>
             <moneyTextField
                 v-model.number="paymentAmount"
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import moneyTextField from "./moneyTextField.vue"
+import moneyTextField from "../components/moneyTextField.vue"
 export default {
     name: "repaymentForm",
     components: {

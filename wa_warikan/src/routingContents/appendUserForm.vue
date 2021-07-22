@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import userTextField from "./userTextField.vue"
+import userTextField from "../components/userTextField.vue"
 
 export default {
     name: "appendUserForm",

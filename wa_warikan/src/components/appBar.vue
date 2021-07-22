@@ -1,51 +1,57 @@
 <template>
-    <header>
-        <v-app-bar
-            app
-            fixed
-            color="orange"
-            elevate-on-scroll
-        >
-            <v-app-bar-nav-icon 
-                @click="drawer = true"
-                v-if="($vuetify.breakpoint.sm || $vuetify.breakpoint.xs)"
-            ></v-app-bar-nav-icon>
-            <v-toolbar-title>和割勘</v-toolbar-title>
-            <v-tabs v-if="!($vuetify.breakpoint.sm || $vuetify.breakpoint.xs)">
-                <v-tab
-                    v-for="menuItem in menuList"
-                    :key="menuItem"
-                >
-                    {{ menuItem }}
-                </v-tab>
-            </v-tabs>
-
-            <v-spacer></v-spacer>
-
-            <v-btn icon>
-                <v-icon>mdi-help-circle-outline</v-icon>
-            </v-btn>
-        </v-app-bar>
-        <v-navigation-drawer
-            v-model="drawer"
-            fixed
-            temporary
-        >
-            <v-list
-                nav
-                dense
+    <div>
+        <header>
+            <v-app-bar
+                app
+                fixed
+                color="orange"
+                elevate-on-scroll
             >
-                <v-list-item-group>
-                    <v-list-item
+                <v-app-bar-nav-icon 
+                    @click="drawer = true"
+                    v-if="($vuetify.breakpoint.sm || $vuetify.breakpoint.xs)"
+                ></v-app-bar-nav-icon>
+                <v-toolbar-title>和割勘</v-toolbar-title>
+                <v-tabs v-if="!($vuetify.breakpoint.sm || $vuetify.breakpoint.xs)">
+                    <v-tab
                         v-for="menuItem in menuList"
-                        :key="menuItem"
+                        :key="menuItem.name"
+                        :to="menuItem.url"
                     >
-                        <v-list-item-title>{{ menuItem }}</v-list-item-title>
-                    </v-list-item>
-                </v-list-item-group>
-            </v-list>
-        </v-navigation-drawer>
-    </header>
+                        {{ menuItem.name }}
+                    </v-tab>
+                </v-tabs>
+
+                <v-spacer></v-spacer>
+
+                <v-btn icon>
+                    <v-icon>mdi-help-circle-outline</v-icon>
+                </v-btn>
+            </v-app-bar>
+            <v-navigation-drawer
+                v-model="drawer"
+                fixed
+                temporary
+            >
+                <v-list
+                    nav
+                    dense
+                >
+                    <v-list-item-group>
+                        <v-list-item
+                            v-for="menuItem in menuList"
+                            :key="menuItem.name"
+                            :to="menuItem.url"
+                        >
+                            <v-list-item-title>{{ menuItem.name }}</v-list-item-title>
+                        </v-list-item>
+                    </v-list-item-group>
+                </v-list>
+            </v-navigation-drawer>
+        </header>
+        <div class="ma-12"></div>
+        <router-view></router-view>
+    </div>
 </template>
 
 <script>
@@ -54,11 +60,18 @@ export default ({
     data(){
         return {
             drawer: false,
-            menuList: [
-                "ユーザー追加",
-                "受け渡し",
-                "投げ銭",
-            ],
+            menuList: [{
+                name: "ユーザー追加",
+                url: "/appendUserForm",
+            },
+            {
+                name: "受け渡し",
+                url: "/repaymentForm",
+            },
+            {
+                name: "投げ銭",
+                url: "/tippingForm",
+            }],
         };
     },
 });

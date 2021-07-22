@@ -1,13 +1,7 @@
 <template>
     <v-container>
-        <appendUserForm
-            :userNameList="userNameList"
-            @appendUserEvent="appendUser"
-        ></appendUserForm>
-        <repaymentForm
-            :userNameList="userNameList"
-            @repaymentEvent="calcRepayment"
-        ></repaymentForm>
+        <appBar></appBar>
+        
         <p :class="{ disabledContent: userNameList.length < 2 }">総額：{{ totalPayment }}</p>
         <p :class="{ disabledContent: userNameList.length < 2 }">一人あたり：{{ averagePayment }}</p>
         <p v-if="userNameList.length >= 2 && hasFraction"  :class="{ disabledContent: userNameList.length < 2 }">誰かが「{{userNameList.length}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
@@ -28,15 +22,17 @@
 <script>
 import Vue from 'vue';
 import userInfo from "./userInfo.vue";
-import repaymentForm from "./repaymentForm.vue";
-import appendUserForm from './appendUserForm.vue';
+import appBar from "./appBar.vue"
+// import repaymentForm from "../routingContents/repaymentForm.vue";
+// import appendUserForm from '../routingContents/appendUserForm.vue';
 
 export default {
     name: "userRoot",
     components: {
         userInfo,
-        repaymentForm,
-        appendUserForm,
+        appBar,
+        // repaymentForm,
+        // appendUserForm,
     },
     data(){
         return{
