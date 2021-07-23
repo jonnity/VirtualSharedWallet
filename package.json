@@ -1,0 +1,26 @@
+{
+  "name": "virtualsharedwallet.git",
+  "version": "1.0.0",
+  "description": "使用金額を入力していくことで，仮想的な共同財布を実現して，楽にトータルの割り勘ができるようにするサービス",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonnity/VirtualSharedWallet.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jonnity/VirtualSharedWallet/issues"
+  },
+  "homepage": "https://github.com/jonnity/VirtualSharedWallet#readme"
+}
