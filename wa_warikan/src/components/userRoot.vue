@@ -89,6 +89,6 @@ export default {
 
 <style scoped>
 .disabledContent{
-    color: #aaa;
+    color: #bbb;
 }
 </style>
