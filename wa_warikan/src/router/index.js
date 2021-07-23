@@ -7,7 +7,7 @@ import tippingForm from '../routingContents/tippingForm.vue'
 Vue.use(VueRouter)
 
 const routes = [{
-        path: '/appendUserForm',
+        path: '/',
         name: 'appendUserForm',
         component: appendUserForm,
     },

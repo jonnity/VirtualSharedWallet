@@ -66,16 +66,17 @@ export default ({
             drawer: false,
             menuList: [{
                 name: "ユーザー追加",
-                url: "/appendUserForm",
+                url: "/",
             },
             {
                 name: "受け渡し",
                 url: "/repaymentForm",
             },
-            {
-                name: "投げ銭",
-                url: "/tippingForm",
-            }],
+            // {
+            //     name: "投げ銭",
+            //     url: "/tippingForm",
+            // }
+            ],
         };
     },
     props: ["userNameList", "paymentList"],
