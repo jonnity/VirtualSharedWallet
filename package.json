@@ -2,12 +2,13 @@
     "name": "virtualsharedwallet.git",
     "version": "1.0.0",
     "description": "使用金額を入力していくことで，仮想的な共同財布を実現して，楽にトータルの割り勘ができるようにするサービス",
-    "main": "index.js",
+    "main": "server.js",
     "directories": {
         "doc": "doc"
     },
     "dependencies": {
         "express": "^4.17.1",
+        "path": "^0.12.7",
         "serve-static": "^1.14.1"
     },
     "devDependencies": {},
