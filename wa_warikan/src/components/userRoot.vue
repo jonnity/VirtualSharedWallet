@@ -19,8 +19,8 @@
             </div>
         </v-row>
         <div class="pa-6">
-            <p :class="{ disabledContent: userNameList.length < 2 }">総額：{{ totalPayment }}</p>
-            <p :class="{ disabledContent: userNameList.length < 2 }">一人あたり：{{ averagePayment }}</p>
+            <p :class="{ disabledContent: userNameList.length < 2 }">総額：{{ totalPayment }}円</p>
+            <p :class="{ disabledContent: userNameList.length < 2 }">一人あたり：{{ averagePayment }}円</p>
             <p v-if="userNameList.length >= 2 && hasFraction"  :class="{ disabledContent: userNameList.length < 2 }">誰かが「{{userNameList.length}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
             <p v-if="userNameList.length < 2 || !hasFraction" :class="{ disabledContent: userNameList.length < 2 }">端数はありません</p>
         </div>
@@ -95,6 +95,6 @@ export default {
 
 <style scoped>
 .disabledContent{
-    color: #bbb;
+    color: #aaa;
 }
 </style>

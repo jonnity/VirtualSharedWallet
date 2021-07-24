@@ -36,15 +36,28 @@
             </v-row>
             <v-row class="ml-1">
                 <v-col class="pa-1">
-                    <span>累計支払金額：{{ userPayedAmount | floorToTenths }}</span>
+                    <span>累計支払金額：{{ userPayedAmount | floorToTenths }}円</span>
                 </v-col>
             </v-row>
             <v-row class="ml-1">
                 <v-col class="pa-1 mb-3">
                     <span
-                        v-bind:class="userSplitPayment>0 ? 'class_profit' : userSplitPayment<0 ? 'class_loss' : 'class_just'"
+                        v-if="userSplitPayment<0"
+                        class="class_loss"
                     >
-                        調整金額：{{ userSplitPayment | floorToTenths }}
+                        {{ Math.abs(userSplitPayment) | floorToTenths }}円 建て替え中
+                    </span>
+                    <span
+                        v-else-if="userSplitPayment>0"
+                        class="class_profit"
+                    >
+                        {{ Math.abs(userSplitPayment) | floorToTenths }}円 支払うと割り勘
+                    </span>
+                    <span
+                        v-else
+                        class="class_just"
+                    >
+                        ちょうど一人分の金額を払っています
                     </span>
                 </v-col>
             </v-row>
@@ -96,9 +109,10 @@ export default {
 <style scoped>
 .class_profit {
     font-weight: bold;
+    color: red;
 }
 .class_loss {
-    color: red;
+    color: blue;
 }
 .class_just {
     color: #666;
