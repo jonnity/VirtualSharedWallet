@@ -1,5 +1,5 @@
 <template>
-    <v-sheet 
+    <v-sheet
         class="ma-2"
         color="#FFF9C4"
         elevation="6"
@@ -8,6 +8,13 @@
         <v-container>
             <v-row class="ma-1" id="id_userName">
                 <span>{{ userName }}</span>
+                <v-spacer></v-spacer>
+                <v-btn
+                    @click="deleteUser"
+                    icon
+                >
+                    <v-icon>mdi-close-circle</v-icon>
+                </v-btn>
             </v-row>
             <v-row class="ml-1" align="center">
                 <v-col class="pa-1">
@@ -72,6 +79,9 @@ export default {
                 amount: integerPaymentAmount,
             });
             this.paymentAmount = "";
+        },
+        deleteUser(){
+            this.$emit("deleteUserEvent", this.userName);
         },
     },
     filters: {

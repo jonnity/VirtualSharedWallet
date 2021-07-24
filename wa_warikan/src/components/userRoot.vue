@@ -14,6 +14,7 @@
                     :userPayedAmount="paymentList[un-1]"
                     :averagePayment="averagePayment"
                     @userPayEvent="calcTotalPayment"
+                    @deleteUserEvent="deleteUser"
                 ></userInfo>
             </div>
         </v-row>
@@ -30,20 +31,15 @@
 import Vue from 'vue';
 import userInfo from "./userInfo.vue";
 import appBar from "./appBar.vue"
-// import repaymentForm from "../routingContents/repaymentForm.vue";
-// import appendUserForm from '../routingContents/appendUserForm.vue';
 
 export default {
     name: "userRoot",
     components: {
         userInfo,
         appBar,
-        // repaymentForm,
-        // appendUserForm,
     },
     data(){
         return{
-            totalPayment: 0,
             userNameList: [],
             paymentList: [],
         }
@@ -65,6 +61,13 @@ export default {
         hasFraction: function(){
             return (this.totalPayment % this.userNameList.length) !== 0
         },
+        totalPayment: function(){
+            let totalPayment = 0;
+            for(let i = 0; i < this.paymentList.length; i++){
+                totalPayment += this.paymentList[i];
+            }
+            return totalPayment;
+        },
     },
     methods: {
         appendUser: function(appendedUserName){
@@ -73,9 +76,7 @@ export default {
         },
         calcTotalPayment: function(paymentInfo){
             const paymentUserIndex = this.userNameList.indexOf(paymentInfo.name);
-            this.paymentList[paymentUserIndex] += paymentInfo.amount;
-            this.totalPayment += paymentInfo.amount;
-            this.totalPayment = Number(this.totalPayment);
+            Vue.set(this.paymentList, paymentUserIndex, this.paymentList[paymentUserIndex] + paymentInfo.amount);
         },
         calcRepayment: function(repaymentInfo){
             const payerIndex = this.userNameList.indexOf(repaymentInfo.payer);
@@ -83,6 +84,11 @@ export default {
             Vue.set(this.paymentList, payerIndex, this.paymentList[payerIndex]+repaymentInfo.amount);
             Vue.set(this.paymentList, receiverIndex, this.paymentList[receiverIndex]-repaymentInfo.amount);
         },
+        deleteUser: function(userName){
+            const userIndex = this.userNameList.indexOf(userName);
+            this.userNameList.splice(userIndex, 1)
+            this.paymentList.splice(userIndex, 1)
+        }
     },
 }
 </script>
