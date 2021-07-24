@@ -5,7 +5,7 @@ const app = express()
     //we are configuring dist to serve site files
 app.use('/', serveStatic(path.join(__dirname, '/wa_warikan/dist')))
     // this * route is to serve project on different page routes except root `/`
-app.get('*', function(req, res) {
+app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, '/wa_warikan/dist/index.html'))
 })
 const port = process.env.PORT || 8080
