@@ -37,8 +37,11 @@ export default {
     methods: {
         formatNameAndEmitEvent: function(){
             let appendedUserName = this.inputtedUserName;
-            const sameNameReg = new RegExp("/"+this.inputtedUserName+"_\\d/");
-            const sameNames = this.userNameList.filter(function(name){return name.match(sameNameReg) != [];});
+            const sameNameReg = new RegExp(this.inputtedUserName+"_?[0-9]*");
+            const sameNames = this.userNameList.filter(function(name){return name.search(sameNameReg)!=-1;});
+            // console.log(this.inputtedUserName);
+            // console.log(sameNames);
+            // console.log(sameNameReg);
             const sameNameMenberNum = sameNames.length;
             if(sameNameMenberNum > 0){
                 appendedUserName = this.inputtedUserName + "_" + (sameNameMenberNum+1); 
