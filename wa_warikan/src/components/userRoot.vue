@@ -31,6 +31,9 @@
 import Vue from 'vue';
 import userInfo from "./userInfo.vue";
 import appBar from "./appBar.vue"
+import VueCookies from 'vue-cookies'
+
+Vue.use(VueCookies);
 
 export default {
     name: "userRoot",
@@ -86,9 +89,22 @@ export default {
         },
         deleteUser: function(userName){
             const userIndex = this.userNameList.indexOf(userName);
-            this.userNameList.splice(userIndex, 1)
-            this.paymentList.splice(userIndex, 1)
+            this.userNameList.splice(userIndex, 1);
+            this.paymentList.splice(userIndex, 1);
         }
+    },
+    updated: function(){
+        this.$cookies.set("userNameList", this.userNameList);
+        this.$cookies.set("paymentList", this.paymentList);
+    },
+    mounted: function(){
+        if(this.$cookies.isKey("userNameList") && this.$cookies.isKey("paymentList")){
+            let tempUserNameList = this.$cookies.get("userNameList").split(",");
+            this.userNameList = tempUserNameList;
+            let tempPaymentList = this.$cookies.get("paymentList").split(",");
+            tempPaymentList = tempPaymentList.map(function(paymentStr){return Number(paymentStr)});
+            this.paymentList = tempPaymentList;
+        } 
     },
 }
 </script>
