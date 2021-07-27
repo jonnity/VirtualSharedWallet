@@ -79,7 +79,7 @@ export default ({
             ],
         };
     },
-    props: ["userNameList", "paymentList"],
+    props: ["userNameList"],
     methods: {
         appendEvent: function(appendedUserName){
             this.$emit("appendUserEvent", appendedUserName);

@@ -2,7 +2,6 @@
     <v-container>
         <appBar
             :userNameList="userNameList"
-            :paymentList="paymentList"
             @appendUserEvent="appendUser"
             @repaymentEvent="calcRepayment"
         ></appBar>
