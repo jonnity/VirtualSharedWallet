@@ -1,29 +1,45 @@
 <template>
-    <v-container>
-        <appBar
-            :userNameList="userNameList"
-            @appendUserEvent="appendUser"
-            @repaymentEvent="calcRepayment"
-        ></appBar>
+  <v-container>
+    <appBar
+      :userNameList="userNameList"
+      @appendUserEvent="appendUser"
+      @repaymentEvent="calcRepayment"
+    ></appBar>
 
-        <v-row class="pa-2">
-            <div v-for="un in userIterator" :key="un">
-                <userInfo
-                    :userName="userNameList[un-1]"
-                    :userPayedAmount="paymentList[un-1]"
-                    :averagePayment="averagePayment"
-                    @userPayEvent="calcTotalPayment"
-                    @deleteUserEvent="deleteUser"
-                ></userInfo>
-            </div>
-        </v-row>
-        <div class="pa-6">
-            <p :class="{ disabledContent: userNameList.length < 2 }">総額：{{ totalPayment }}円</p>
-            <p :class="{ disabledContent: userNameList.length < 2 }">一人あたり：{{ averagePayment }}円</p>
-            <p v-if="userNameList.length >= 2 && hasFraction"  :class="{ disabledContent: userNameList.length < 2 }">誰かが「{{userNameList.length}}で割って{{ mod }}余る数字」円払うと端数がなくなります</p>
-            <p v-if="userNameList.length < 2 || !hasFraction" :class="{ disabledContent: userNameList.length < 2 }">端数はありません</p>
-        </div>
-    </v-container>
+    <v-row class="pa-2">
+      <div v-for="un in userIterator" :key="un">
+        <userInfo
+          :userName="userNameList[un - 1]"
+          :userPayedAmount="paymentList[un - 1]"
+          :averagePayment="averagePayment"
+          @userPayEvent="calcTotalPayment"
+          @deleteUserEvent="deleteUser"
+        ></userInfo>
+      </div>
+    </v-row>
+    <div class="pa-6">
+      <p :class="{ disabledContent: userNameList.length < 2 }">
+        総額：{{ totalPayment }}円
+      </p>
+      <p :class="{ disabledContent: userNameList.length < 2 }">
+        一人あたり：{{ averagePayment }}円
+      </p>
+      <p
+        v-if="userNameList.length >= 2 && hasFraction"
+        :class="{ disabledContent: userNameList.length < 2 }"
+      >
+        誰かが「{{ userNameList.length }}で割って{{
+          mod
+        }}余る数字」円払うと端数がなくなります
+      </p>
+      <p
+        v-if="userNameList.length < 2 || !hasFraction"
+        :class="{ disabledContent: userNameList.length < 2 }"
+      >
+        端数はありません
+      </p>
+    </div>
+  </v-container>
 </template>
 
 <script>
@@ -109,7 +125,7 @@ export default {
 </script>
 
 <style scoped>
-.disabledContent{
-    color: #aaa;
+.disabledContent {
+  color: #aaa;
 }
 </style>

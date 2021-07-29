@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import userRoot from "./components/userRoot.vue"
-import myFooter from "./components/footer.vue"
+import userRoot from "./components/userRoot.vue";
+import myFooter from "./components/footer.vue";
 
 export default {
   name: "App",
