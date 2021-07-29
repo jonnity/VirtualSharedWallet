@@ -35,34 +35,26 @@
 
 <script>
 export default {
-    data: function () {
-        return {
-            icons: [
-                'mdi-home',
-                'mdi-email',
-                'mdi-calendar',
-                'mdi-delete',
-            ],
-            items: [
-                'default',
-                'absolute',
-                'fixed',
-            ],
-            variant: 'absolute',
-            padless: false,
-        }},
-    computed: {
-        localAttrs () {
-        const attrs = {}
+  data: function() {
+    return {
+      icons: ["mdi-home", "mdi-email", "mdi-calendar", "mdi-delete"],
+      items: ["default", "absolute", "fixed"],
+      variant: "absolute",
+      padless: false,
+    };
+  },
+  computed: {
+    localAttrs() {
+      const attrs = {};
 
-        if (this.variant === 'default') {
-            attrs.absolute = false
-            attrs.fixed = false
-        } else {
-            attrs[this.variant] = true
-        }
-        return attrs
-        },
+      if (this.variant === "default") {
+        attrs.absolute = false;
+        attrs.fixed = false;
+      } else {
+        attrs[this.variant] = true;
+      }
+      return attrs;
     },
-}
+  },
+};
 </script>

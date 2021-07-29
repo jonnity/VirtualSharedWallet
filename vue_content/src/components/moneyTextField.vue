@@ -13,9 +13,9 @@
 
 <script>
 export default {
-    name: "moneyTextField",
-    props: ['value'],
-}
+  name: "moneyTextField",
+  props: ["value"],
+};
 </script>
 
 <style>

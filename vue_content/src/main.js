@@ -7,10 +7,10 @@ import "@mdi/font/css/materialdesignicons.css";
 Vue.config.productionTip = false;
 
 new Vue({
-    icons: {
-        iconfont: "mdi",
-    },
-    vuetify,
-    router,
-    render: (h) => h(App),
+  icons: {
+    iconfont: "mdi",
+  },
+  vuetify,
+  router,
+  render: (h) => h(App),
 }).$mount("#app");

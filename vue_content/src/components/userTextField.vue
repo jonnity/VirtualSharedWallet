@@ -13,7 +13,7 @@
 
 <script>
 export default {
-    name: "userTextField",
-    props: ['value'],
-}
+  name: "userTextField",
+  props: ["value"],
+};
 </script>

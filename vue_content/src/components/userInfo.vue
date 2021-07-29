@@ -46,43 +46,43 @@
 </template>
 
 <script>
-import moneyTextField from './moneyTextField.vue';
+import moneyTextField from "./moneyTextField.vue";
 
 export default {
-    name: "userInfo",
-    components: {
-        moneyTextField,
+  name: "userInfo",
+  components: {
+    moneyTextField,
+  },
+  props: ["userName", "averagePayment", "userPayedAmount"],
+  data: function() {
+    return {
+      paymentAmount: "",
+    };
+  },
+  computed: {
+    userSplitPayment: function() {
+      return this.averagePayment - this.userPayedAmount;
     },
-    props: ["userName", "averagePayment", "userPayedAmount"],
-    data: function () {
-        return {
-            "paymentAmount": "",
-        };
+  },
+  methods: {
+    addPaymentAmount: function() {
+      const integerPaymentAmount = Math.floor(this.paymentAmount);
+      this.$emit("userPayEvent", {
+        name: this.userName,
+        amount: integerPaymentAmount,
+      });
+      this.paymentAmount = "";
     },
-    computed: {
-        userSplitPayment: function(){
-            return this.averagePayment - this.userPayedAmount;
-        },
+    deleteUser() {
+      this.$emit("deleteUserEvent", this.userName);
     },
-    methods: {
-        addPaymentAmount: function(){
-            const integerPaymentAmount = Math.floor(this.paymentAmount);
-            this.$emit("userPayEvent", {
-                name: this.userName,
-                amount: integerPaymentAmount,
-            });
-            this.paymentAmount = "";
-        },
-        deleteUser(){
-            this.$emit("deleteUserEvent", this.userName);
-        },
+  },
+  filters: {
+    floorToTenths: function(number) {
+      // 小数点第一位まで残して切り捨て
+      return Math.floor(number * 10) / 10;
     },
-    filters: {
-        floorToTenths: function(number){
-            // 小数点第一位まで残して切り捨て
-            return Math.floor(number*10)/10;
-        },
-    },
+  },
 };
 </script>
 

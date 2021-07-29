@@ -47,36 +47,37 @@
 </template>
 
 <script>
-export default ({
-    name: "appBar",
-    data(){
-        return {
-            drawer: false,
-            menuList: [{
-                name: "ユーザー追加",
-                url: "/",
-            },
-            {
-                name: "受け渡し",
-                url: "/repaymentForm",
-            },
-            // {
-            //     name: "投げ銭",
-            //     url: "/tippingForm",
-            // }
-            ],
-        };
-    },
-    props: ["userNameList"],
-    methods: {
-        appendEvent: function(appendedUserName){
-            this.$emit("appendUserEvent", appendedUserName);
+export default {
+  name: "appBar",
+  data() {
+    return {
+      drawer: false,
+      menuList: [
+        {
+          name: "ユーザー追加",
+          url: "/",
         },
-        repaymentEvent: function(repaymentInfo){
-            this.$emit("repaymentEvent", repaymentInfo);
-        }
-    }
-});
+        {
+          name: "受け渡し",
+          url: "/repaymentForm",
+        },
+        // {
+        //     name: "投げ銭",
+        //     url: "/tippingForm",
+        // }
+      ],
+    };
+  },
+  props: ["userNameList"],
+  methods: {
+    appendEvent: function(appendedUserName) {
+      this.$emit("appendUserEvent", appendedUserName);
+    },
+    repaymentEvent: function(repaymentInfo) {
+      this.$emit("repaymentEvent", repaymentInfo);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
