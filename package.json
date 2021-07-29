@@ -1,5 +1,5 @@
 {
-    "name": "virtualsharedwallet.git",
+    "name": "wa-warikan",
     "version": "1.0.0",
     "description": "使用金額を入力していくことで，仮想的な共同財布を実現して，楽にトータルの割り勘ができるようにするサービス",
     "main": "server.js",
