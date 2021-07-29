@@ -9,7 +9,7 @@
             "name": "Run npm",
             "request": "launch",
             "type": "node-terminal",
-            "cwd": "${workspaceFolder}/wa_warikan"
+            "cwd": "${workspaceFolder}\\vue_content"
         }
     ]
 }
