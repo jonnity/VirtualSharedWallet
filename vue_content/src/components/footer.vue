@@ -1,60 +1,44 @@
 <template>
-  <v-card height="400px">
-    <v-footer v-bind="localAttrs" :padless="padless">
-      <v-card flat tile width="100%" class="red lighten-1 text-center">
-        <v-card-text>
-          <v-btn v-for="icon in icons" :key="icon" class="mx-4" icon>
+  <v-footer color="#666" absolute padless v-resize="onResize" ref="footer">
+    <v-container>
+      <v-row>
+        <v-col cols="4"></v-col>
+        <v-col cols="4" class="footer_centering">
+          <strong class="white--text">wa-warikan</strong>
+        </v-col>
+        <!-- <v-spacer></v-spacer> -->
+        <v-col cols="4" class="footer_centering">
+          <v-btn v-for="icon in icons" :key="icon" class="mx-1" icon dark>
             <v-icon size="24px">
               {{ icon }}
             </v-icon>
           </v-btn>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-text class="white--text">
-          <strong>wa-warikan</strong>
-        </v-card-text>
-      </v-card>
-    </v-footer>
-
-    <v-row align="center" justify="center" class="ma-12">
-      <v-col cols="12" md="8">
-        <v-select
-          v-model="variant"
-          :items="items"
-          clearable
-          label="Variant"
-        ></v-select>
-
-        <v-checkbox v-model="padless" hide-details label="Padless"></v-checkbox>
-      </v-col>
-    </v-row>
-  </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-footer>
 </template>
 
 <script>
 export default {
   data: function() {
     return {
-      icons: ["mdi-home", "mdi-email", "mdi-calendar", "mdi-delete"],
-      items: ["default", "absolute", "fixed"],
-      variant: "absolute",
-      padless: false,
+      icons: ["mdi-home", "mdi-email", "mdi-calendar"],
     };
   },
-  computed: {
-    localAttrs() {
-      const attrs = {};
-
-      if (this.variant === "default") {
-        attrs.absolute = false;
-        attrs.fixed = false;
-      } else {
-        attrs[this.variant] = true;
-      }
-      return attrs;
+  computed: {},
+  methods: {
+    onResize: function() {
+      const footer_height = this.$el.getBoundingClientRect().height;
+      this.$emit("resizeEvent", footer_height);
     },
   },
 };
 </script>
+
+<style scoped>
+.footer_centering {
+  align-self: center;
+  text-align: center;
+}
+</style>

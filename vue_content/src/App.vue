@@ -1,7 +1,8 @@
 <template>
   <v-app>
     <userRoot></userRoot>
-    <myFooter></myFooter>
+    <div :style="padding_styles"></div>
+    <myFooter @resizeEvent="footerPadding"></myFooter>
   </v-app>
 </template>
 
@@ -15,8 +16,19 @@ export default {
     userRoot,
     myFooter,
   },
-  data: () => ({
-    //
-  }),
+  data: function() {
+    return {
+      padding_styles: "",
+    };
+  },
+  methods: {
+    footerPadding: function(footer_size) {
+      this.padding_styles = {
+        "padding-top": footer_size + "px",
+      };
+    },
+  },
 };
 </script>
+
+<style scoped></style>
