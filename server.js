@@ -7,9 +7,9 @@ const path = require("path");
 const app = express();
 app.use(history());
 
-app.use("/", serveStatic(path.join(__dirname, "/wa_warikan/dist")));
+app.use("/", serveStatic(path.join(__dirname, "./vue_content/dist")));
 app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "/wa_warikan/dist/index.html"));
+  res.sendFile(path.join(__dirname, "./vue_content/dist/index.html"));
 });
 const port = process.env.PORT || 8080;
 app.listen(port);
