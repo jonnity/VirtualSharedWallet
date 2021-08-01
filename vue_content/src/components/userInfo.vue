@@ -11,6 +11,7 @@
           v-if="deleteConfirmFlag"
           @deleteConfirmEvent="deleteUser"
           :deletedUserName="userName"
+          @deleteCancelEvent="cancelDeleting"
         ></deleteConfirmModal>
       </v-row>
       <v-row class="ml-1" align="center">
@@ -87,6 +88,9 @@ export default {
     },
     deleteConfirm() {
       this.deleteConfirmFlag = true;
+    },
+    cancelDeleting() {
+      this.deleteConfirmFlag = false;
     },
   },
   filters: {
