@@ -4,9 +4,15 @@
       <v-row class="ma-1" id="id_userName">
         <span>{{ userName }}</span>
         <v-spacer></v-spacer>
-        <v-btn @click="deleteUser" icon>
+        <v-btn @click="deleteConfirm" icon>
           <v-icon>mdi-close-circle</v-icon>
         </v-btn>
+        <deleteConfirmModal
+          v-if="deleteConfirmFlag"
+          @deleteConfirmEvent="deleteUser"
+          :deletedUserName="userName"
+          @deleteCancelEvent="cancelDeleting"
+        ></deleteConfirmModal>
       </v-row>
       <v-row class="ml-1" align="center">
         <v-col class="pa-1">
@@ -47,16 +53,19 @@
 
 <script>
 import moneyTextField from "./moneyTextField.vue";
+import deleteConfirmModal from "./deleteConfirmModal.vue";
 
 export default {
   name: "userInfo",
   components: {
     moneyTextField,
+    deleteConfirmModal,
   },
   props: ["userName", "averagePayment", "userPayedAmount"],
   data: function() {
     return {
       paymentAmount: "",
+      deleteConfirmFlag: false,
     };
   },
   computed: {
@@ -65,7 +74,7 @@ export default {
     },
   },
   methods: {
-    addPaymentAmount: function() {
+    addPaymentAmount() {
       const integerPaymentAmount = Math.floor(this.paymentAmount);
       this.$emit("userPayEvent", {
         name: this.userName,
@@ -74,7 +83,14 @@ export default {
       this.paymentAmount = "";
     },
     deleteUser() {
+      this.deleteConfirmFlag = false;
       this.$emit("deleteUserEvent", this.userName);
+    },
+    deleteConfirm() {
+      this.deleteConfirmFlag = true;
+    },
+    cancelDeleting() {
+      this.deleteConfirmFlag = false;
     },
   },
   filters: {
