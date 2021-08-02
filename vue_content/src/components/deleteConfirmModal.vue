@@ -7,21 +7,17 @@
     >
       <v-container>
         <v-row justify="center">
-          <v-col cols="8">
-            <p>{{ deletedUserName }} さんを削除します。</p>
-          </v-col>
-          <v-col cols="4" align-self="end">
-            <v-row justify="end">
-              <v-btn @click="cancelDeleting">
-                キャンセル
-              </v-btn>
-              <v-btn icon @click="confirmDeleting">
-                <v-icon>
-                  mdi-delete
-                </v-icon>
-              </v-btn>
-            </v-row>
-          </v-col>
+          <p>{{ deletedUserName }} さんを削除します。</p>
+        </v-row>
+        <v-row justify="center">
+          <v-btn @click="cancelDeleting">
+            キャンセル
+          </v-btn>
+          <v-btn @click="confirmDeleting">
+            <v-icon>
+              mdi-delete
+            </v-icon>
+          </v-btn>
         </v-row>
       </v-container>
     </v-card>
