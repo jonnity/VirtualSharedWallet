@@ -8,7 +8,7 @@
       <v-container>
         <v-row justify="center">
           <v-col cols="8">
-            <v-row> {{ deletedUserName }} さんを削除します。</v-row>
+            <p>{{ deletedUserName }} さんを削除します。</p>
           </v-col>
           <v-col cols="4" align-self="end">
             <v-row justify="end">

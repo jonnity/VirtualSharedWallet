@@ -4,8 +4,8 @@
       :userNameList="userNameList"
       @appendUserEvent="appendUser"
       @repaymentEvent="calcRepayment"
+      @clickHelpButton="$emit('clickHelpButton')"
     ></appBar>
-
     <v-row class="pa-2">
       <div v-for="un in userIterator" :key="un">
         <userInfo
