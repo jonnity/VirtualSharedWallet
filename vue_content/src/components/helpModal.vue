@@ -8,10 +8,12 @@
           </v-btn>
         </v-row>
         <v-row justify="center">
+          <helpCarousel></helpCarousel>
+          <!-- <h2>概要</h2>
           <p>
             「みんなで合計xxx円」という支払いを誰かがまとめて払っても、最終的に割り勘できたら完璧
           </p>
-          <p>ちょっとメモするだけで実現可能</p>
+          <p>ちょっとメモするだけで実現可能</p> -->
         </v-row>
       </v-container>
     </v-card>
@@ -19,8 +21,12 @@
 </template>
 
 <script>
+import helpCarousel from "./helpCarousel.vue";
 export default {
   name: "helpModal",
+  components: {
+    helpCarousel,
+  },
   data() {
     return {};
   },
