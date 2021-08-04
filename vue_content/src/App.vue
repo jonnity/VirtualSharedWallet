@@ -1,6 +1,20 @@
 <template>
   <v-app>
-    <userRoot></userRoot>
+    <userRoot
+      @clickHelpButton="
+        () => {
+          help_flag = true;
+        }
+      "
+    ></userRoot>
+    <helpModal
+      v-if="help_flag"
+      @closeHelp="
+        () => {
+          this.help_flag = false;
+        }
+      "
+    ></helpModal>
     <div :style="padding_styles"></div>
     <myFooter @resizeEvent="footerPadding"></myFooter>
   </v-app>
@@ -9,16 +23,19 @@
 <script>
 import userRoot from "./components/userRoot.vue";
 import myFooter from "./components/footer.vue";
+import helpModal from "./components/helpModal.vue";
 
 export default {
   name: "App",
   components: {
     userRoot,
     myFooter,
+    helpModal,
   },
   data: function() {
     return {
       padding_styles: "",
+      help_flag: false,
     };
   },
   methods: {

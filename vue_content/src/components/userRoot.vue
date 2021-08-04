@@ -4,8 +4,8 @@
       :userNameList="userNameList"
       @appendUserEvent="appendUser"
       @repaymentEvent="calcRepayment"
+      @clickHelpButton="$emit('clickHelpButton')"
     ></appBar>
-
     <v-row class="pa-2">
       <div v-for="un in userIterator" :key="un">
         <userInfo
@@ -130,17 +130,28 @@ export default {
     this.$cookies.set("paymentList", this.paymentList);
   },
   mounted: function() {
+    let tempUserNameList = "";
+    let tempPaymentList = "";
     if (
-      this.$cookies.isKey("userNameList") &&
-      this.$cookies.isKey("paymentList")
+      !(
+        this.$cookies.isKey("userNameList") &&
+        this.$cookies.isKey("paymentList")
+      )
     ) {
-      let tempUserNameList = this.$cookies.get("userNameList").split(",");
-      this.userNameList = tempUserNameList;
-      let tempPaymentList = this.$cookies.get("paymentList").split(",");
+      return;
+    } else {
+      tempUserNameList = this.$cookies;
+      tempPaymentList = this.$cookies;
+    }
+
+    if (tempUserNameList === "" || tempPaymentList === "") {
+      return;
+    } else {
+      this.userNameList = tempUserNameList.get("userNameList").split(",");
       tempPaymentList = tempPaymentList.map(function(paymentStr) {
         return Number(paymentStr);
       });
-      this.paymentList = tempPaymentList;
+      this.paymentList = tempPaymentList.get("paymentList").split(",");
     }
   },
 };

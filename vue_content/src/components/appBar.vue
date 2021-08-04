@@ -19,7 +19,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon>
+        <v-btn icon @click="$emit('clickHelpButton')">
           <v-icon>mdi-help-circle-outline</v-icon>
         </v-btn>
       </v-app-bar>
