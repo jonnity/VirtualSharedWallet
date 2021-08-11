@@ -10,9 +10,10 @@
 
 ```
 create table session_master(
-  session_name  char(32)  not null,
-  pass_hash     char(64)  not null,
-  create_date   date      not null,
+  session_name  char(32)   not null,
+  pass_hash     char(64),
+  create_time   timestamp  not null,
+  update_time   timestamp  not null,
   primary key (session_name)
 );
 ```
@@ -22,18 +23,27 @@ create table users(
   session_name  char(32)  not null,
   user_name     char(32)  not null,
   user_payment  int       not null,
-  primary key (session_name)
+  primary key (session_name, user_name)
 );
 ```
 
 ```
 insert into session_master
-  (session_name, pass_hash, create_date)
-  values ('test_session3', 'password', now());
+  (session_name, pass_hash, create_time, update_time)
+  values ('test_session', 'password', now(), now());
+insert into session_master
+  (session_name, pass_hash, create_time, update_time)
+  values ('test_session2', 'password2', now(), now());
 ```
 
 ```
 insert into users
   (session_name, user_name, user_payment)
   values ('test_session', '割勘太郎', '1000');
+insert into users
+  (session_name, user_name, user_payment)
+  values ('test_session', '割勘次郎', '5000');
+insert into users
+  (session_name, user_name, user_payment)
+  values ('test_session', 'ワワーリ・カーン', '10000');
 ```
