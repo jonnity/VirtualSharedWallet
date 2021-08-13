@@ -6,7 +6,6 @@ const app = express();
 const { Client } = require("pg");
 
 app.get("/", function (req, res, next) {
-  console.log("getリクエスト");
   const client = new Client({
     database: "test",
     user: "postgres",
@@ -14,27 +13,22 @@ app.get("/", function (req, res, next) {
     host: "localhost",
     port: 5432,
   });
-  // client
-  //   .query("SELECT user_name, user_payment FROM users")
-  //   .then((res) => console.log(res))
-  //   .catch((e) => console.error(e.stack));
-  // client.query(
-  //   "SELECT user_name, user_payment FROM users",
-  //   function (err, result) {
-  //     res.render("index", {
-  //       title: "Express",
-  //       datas: result,
-  //     });
-  //     console.log(result); //コンソール上での確認用なため、この1文は必須ではない。
-  //   }
-  // );
-
   client.connect();
+  // 登録済みのセッション名の一覧を取得するクエリ
   client
-    .query("SELECT user_name, user_payment FROM users")
-    .then((result) => res.send(result.rows))
-    .catch((e) => console.error(e.stack))
-    .then(() => client.end());
+    .query(
+      "select session_name from session_master where session_name=" +
+        "'test_session3'"
+    )
+    .then(function (result) {
+      console.log(result.rows[0]);
+      console.log(result.rows[0] === undefined);
+    });
+  // ユーザー情報取るクエリ
+  // .query("SELECT user_name, user_payment FROM users")
+  // .then((result) => res.send(result.rows))
+  // .catch((e) => console.error(e.stack))
+  // .then(() => client.end());
 });
 
 app.listen("3001", () => {

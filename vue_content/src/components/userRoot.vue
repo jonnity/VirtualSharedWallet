@@ -125,6 +125,7 @@ export default {
       this.userNameList.splice(userIndex, 1);
       this.paymentList.splice(userIndex, 1);
     },
+    uploadAndShare: function() {},
   },
   updated: function() {
     this.$cookies.set("userNameList", this.userNameList);

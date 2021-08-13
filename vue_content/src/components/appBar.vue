@@ -42,6 +42,7 @@
       :userNameList="userNameList"
       @appendUserEvent="appendEvent"
       @repaymentEvent="repaymentEvent"
+      @shareEvent="shareEvent"
     ></router-view>
   </div>
 </template>
@@ -79,6 +80,9 @@ export default {
     },
     repaymentEvent: function(repaymentInfo) {
       this.$emit("repaymentEvent", repaymentInfo);
+    },
+    shareEvent: function(sessionName) {
+      this.$emit("shareEvent", sessionName);
     },
   },
 };
