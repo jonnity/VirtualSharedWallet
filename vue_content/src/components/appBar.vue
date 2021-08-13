@@ -61,6 +61,10 @@ export default {
           name: "受け渡し",
           url: "/repaymentForm",
         },
+        {
+          name: "共有 / 読み込み",
+          url: "/shareAndLoadForm",
+        },
         // {
         //     name: "投げ銭",
         //     url: "/tippingForm",

@@ -1,11 +1,13 @@
 const express = require("express");
 const serveStatic = require("serve-static");
+const path = require("path");
 const history = require("connect-history-api-fallback");
 
-const path = require("path");
+const testRouter = require("./api/test.js");
 
 const app = express();
 app.use(history());
+app.use("/test", testRouter);
 
 app.use("/", serveStatic(path.join(__dirname, "./vue_content/dist")));
 app.get("/", function (req, res) {
