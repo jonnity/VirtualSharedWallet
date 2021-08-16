@@ -3,8 +3,8 @@ const serveStatic = require("serve-static");
 const path = require("path");
 const history = require("connect-history-api-fallback");
 
-const checkSessionNameDuplicateRouter = require("./src/api/checkSessionNameDuplicate");
-const resisterSessionAndShareRouter = require("./src/api/resisterSessionAndShare");
+const checkSessionNameDuplicateRouter = require("./server_src/api/checkSessionNameDuplicate");
+const resisterSessionAndShareRouter = require("./server_src/api/resisterSessionAndShare");
 
 const app = express();
 app.use(history());
