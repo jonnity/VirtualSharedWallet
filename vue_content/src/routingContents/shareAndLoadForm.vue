@@ -37,7 +37,7 @@ export default {
 
       const axiosConfig = {
         method: "post",
-        url: "check",
+        url: "checkSessionName",
         responseType: "json",
         headers: {
           "Content-Type": "application/json",
@@ -46,18 +46,24 @@ export default {
         data: { sessionName: this.sessionName },
       };
 
-      const _this = this;
-      axios(axiosConfig).then(function(response) {
-        console.log(response.data.result);
-        console.log(constants.sessionNameDuplicateError);
-        if (response.data.result === constants.sessionNameDuplicateError) {
-          _this.errorMessage = "そのセッション名は使われています";
-          _this.isError = true;
-        } else {
-          _this.isError = false;
-          _this.$emit("shareEvent", _this.sessionName);
-        }
-      });
+      let _this = this;
+      axios(axiosConfig)
+        .then(function(response) {
+          console.log(response.data.result);
+          if (response.data.result === constants.sessionNameDuplicateError) {
+            _this.errorMessage = "そのセッション名は使われています";
+            _this.isError = true;
+          } else {
+            _this.isError = false;
+            _this.$emit("shareEvent", _this.sessionName);
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        })
+        .finally(function() {
+          _this = null;
+        });
     },
   },
 };

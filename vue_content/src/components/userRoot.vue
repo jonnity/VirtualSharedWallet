@@ -48,6 +48,7 @@ import Vue from "vue";
 import userInfo from "./userInfo.vue";
 import appBar from "./appBar.vue";
 import VueCookies from "vue-cookies";
+import axios from "axios";
 
 Vue.use(VueCookies);
 
@@ -125,7 +126,29 @@ export default {
       this.userNameList.splice(userIndex, 1);
       this.paymentList.splice(userIndex, 1);
     },
-    uploadAndShare: function() {},
+    uploadAndShare: function(sessionName) {
+      const axiosConfig = {
+        method: "post",
+        url: "shareSession",
+        responseType: "json",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { sessionName: sessionName },
+      };
+
+      // let _this = this;
+      axios(axiosConfig)
+        .then(function(response) {
+          console.log(response.data.result);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+      // .finally(function() {
+      //   _this = null;
+      // });
+    },
   },
   updated: function() {
     this.$cookies.set("userNameList", this.userNameList);

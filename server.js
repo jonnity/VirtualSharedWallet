@@ -4,12 +4,14 @@ const path = require("path");
 const history = require("connect-history-api-fallback");
 
 const checkSessionNameDuplicateRouter = require("./src/api/checkSessionNameDuplicate");
+const resisterSessionAndShareRouter = require("./src/api/resisterSessionAndShare");
 
 const app = express();
 app.use(history());
 app.use(express.json());
 
-app.use("/check", checkSessionNameDuplicateRouter);
+app.use("/checkSessionName", checkSessionNameDuplicateRouter);
+app.use("/shareSession", resisterSessionAndShareRouter);
 
 app.use("/", serveStatic(path.join(__dirname, "./vue_content/dist")));
 app.get("/", function (req, res) {
