@@ -127,6 +127,11 @@ export default {
       this.paymentList.splice(userIndex, 1);
     },
     uploadAndShare: function(sessionName) {
+      const data = {
+        sessionName: sessionName,
+        userNameList: this.userNameList,
+        paymentList: this.paymentList,
+      };
       const axiosConfig = {
         method: "post",
         url: "shareSession",
@@ -134,7 +139,7 @@ export default {
         headers: {
           "Content-Type": "application/json",
         },
-        data: { sessionName: sessionName },
+        data: data,
       };
 
       // let _this = this;
