@@ -169,20 +169,18 @@ export default {
       )
     ) {
       return;
-    } else {
-      tempUserNameList = this.$cookies;
-      tempPaymentList = this.$cookies;
     }
+    tempUserNameList = this.$cookies;
+    tempPaymentList = this.$cookies;
 
     if (tempUserNameList === "" || tempPaymentList === "") {
       return;
-    } else {
-      this.userNameList = tempUserNameList.get("userNameList").split(",");
-      tempPaymentList = tempPaymentList.map(function(paymentStr) {
-        return Number(paymentStr);
-      });
-      this.paymentList = tempPaymentList.get("paymentList").split(",");
     }
+    this.userNameList = tempUserNameList.get("userNameList").split(",");
+    tempPaymentList = tempPaymentList.map(function(paymentStr) {
+      return Number(paymentStr);
+    });
+    this.paymentList = tempPaymentList.get("paymentList").split(",");
   },
 };
 </script>
