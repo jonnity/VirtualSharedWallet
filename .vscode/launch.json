@@ -17,6 +17,13 @@
       "request": "launch",
       "type": "node-terminal",
       "cwd": "${workspaceFolder}\\test"
+    },
+    {
+      "command": "npm start",
+      "name": "run server",
+      "request": "launch",
+      "type": "node-terminal",
+      "cwd": "${workspaceFolder}"
     }
   ]
 }

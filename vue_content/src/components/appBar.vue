@@ -42,6 +42,7 @@
       :userNameList="userNameList"
       @appendUserEvent="appendEvent"
       @repaymentEvent="repaymentEvent"
+      @shareEvent="shareEvent"
     ></router-view>
   </div>
 </template>
@@ -61,6 +62,10 @@ export default {
           name: "受け渡し",
           url: "/repaymentForm",
         },
+        {
+          name: "共有 / 読み込み",
+          url: "/shareAndLoadForm",
+        },
         // {
         //     name: "投げ銭",
         //     url: "/tippingForm",
@@ -75,6 +80,9 @@ export default {
     },
     repaymentEvent: function(repaymentInfo) {
       this.$emit("repaymentEvent", repaymentInfo);
+    },
+    shareEvent: function(sessionName) {
+      this.$emit("shareEvent", sessionName);
     },
   },
 };

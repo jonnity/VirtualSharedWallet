@@ -5,6 +5,7 @@
       @appendUserEvent="appendUser"
       @repaymentEvent="calcRepayment"
       @clickHelpButton="$emit('clickHelpButton')"
+      @shareEvent="uploadAndShare"
     ></appBar>
     <v-row class="pa-2">
       <div v-for="un in userIterator" :key="un">
@@ -47,6 +48,7 @@ import Vue from "vue";
 import userInfo from "./userInfo.vue";
 import appBar from "./appBar.vue";
 import VueCookies from "vue-cookies";
+import axios from "axios";
 
 Vue.use(VueCookies);
 
@@ -124,6 +126,34 @@ export default {
       this.userNameList.splice(userIndex, 1);
       this.paymentList.splice(userIndex, 1);
     },
+    uploadAndShare: function(sessionName) {
+      const data = {
+        sessionName: sessionName,
+        userNameList: this.userNameList,
+        paymentList: this.paymentList,
+      };
+      const axiosConfig = {
+        method: "post",
+        url: "shareSession",
+        responseType: "json",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+
+      // let _this = this;
+      axios(axiosConfig)
+        .then(function(response) {
+          console.log(response.data.result);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+      // .finally(function() {
+      //   _this = null;
+      // });
+    },
   },
   updated: function() {
     this.$cookies.set("userNameList", this.userNameList);
@@ -139,20 +169,18 @@ export default {
       )
     ) {
       return;
-    } else {
-      tempUserNameList = this.$cookies;
-      tempPaymentList = this.$cookies;
     }
+    tempUserNameList = this.$cookies;
+    tempPaymentList = this.$cookies;
 
     if (tempUserNameList === "" || tempPaymentList === "") {
       return;
-    } else {
-      this.userNameList = tempUserNameList.get("userNameList").split(",");
-      tempPaymentList = tempPaymentList.map(function(paymentStr) {
-        return Number(paymentStr);
-      });
-      this.paymentList = tempPaymentList.get("paymentList").split(",");
     }
+    this.userNameList = tempUserNameList.get("userNameList").split(",");
+    tempPaymentList = tempPaymentList.map(function(paymentStr) {
+      return Number(paymentStr);
+    });
+    this.paymentList = tempPaymentList.get("paymentList").split(",");
   },
 };
 </script>
