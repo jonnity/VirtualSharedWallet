@@ -38,6 +38,7 @@ router.post("/", function (req, res) {
         };
         client.query(query_users).then(function (result) {
           console.log(result);
+          res.send(constants.appURL + "?sessionName=" + sessionName);
         });
       }
     });
@@ -55,5 +56,3 @@ router.post("/", function (req, res) {
 });
 
 module.exports = router;
-
-function isDuplicatedSessionName(sessionName) {}

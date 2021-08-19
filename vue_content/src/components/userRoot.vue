@@ -187,12 +187,45 @@ export default {
         this.$cookies.set("paymentList", this.paymentList);
       });
     },
+    updataUserInfoFromDB: function() {
+      this.$nextTick(function() {
+        const axiosConfig = {
+          method: "get",
+          url: "getUserInfo",
+          responseType: "json",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+
+        let _this = this;
+        axios(axiosConfig)
+          .then(function(response) {
+            console.log(response.data.result);
+            _this.userNameList = response.data.userNameList;
+            _this.userNameList = response.data.paymentList;
+          })
+          .catch(function(error) {
+            console.log(error);
+          })
+          .finally(function() {
+            _this = null;
+          });
+      });
+    },
   },
   updated: function() {
     this.setUserInfoToCookie();
   },
   mounted: function() {
-    this.updateUserInfoFromCookie();
+    if (
+      this.$route.query.sessionName !== undefined &&
+      this.$route.query.sessionName !== ""
+    ) {
+      this.updataUserInfoFromDB();
+    } else {
+      this.updateUserInfoFromCookie();
+    }
   },
 };
 </script>
