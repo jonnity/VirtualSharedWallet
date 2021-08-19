@@ -154,33 +154,45 @@ export default {
       //   _this = null;
       // });
     },
+    updateUserInfoFromCookie: function() {
+      this.$nextTick(function() {
+        // どちらかのキーがなかったら中止
+        if (
+          !this.$cookies.isKey("userNameList") ||
+          !this.$cookies.isKey("paymentList")
+        ) {
+          this.userNameList = [];
+          this.paymentList = [];
+          return;
+        }
+        let tempUserNameListCookie = this.$cookies.get("userNameList");
+        let tempPaymentListCookie = this.$cookies.get("paymentList");
+
+        if (tempUserNameListCookie === "" || tempPaymentListCookie === "") {
+          alert("データが破損しています。");
+          this.userNameList = [];
+          this.paymentList = [];
+          return;
+        }
+        this.userNameList = tempUserNameListCookie.split(",");
+        let tempPaymentList = tempPaymentListCookie.split(",");
+        this.paymentList = tempPaymentList.map(function(paymentStr) {
+          return Number(paymentStr);
+        });
+      });
+    },
+    setUserInfoToCookie: function() {
+      this.$nextTick(function() {
+        this.$cookies.set("userNameList", this.userNameList);
+        this.$cookies.set("paymentList", this.paymentList);
+      });
+    },
   },
   updated: function() {
-    this.$cookies.set("userNameList", this.userNameList);
-    this.$cookies.set("paymentList", this.paymentList);
+    this.setUserInfoToCookie();
   },
   mounted: function() {
-    let tempUserNameList = "";
-    let tempPaymentList = "";
-    if (
-      !(
-        this.$cookies.isKey("userNameList") &&
-        this.$cookies.isKey("paymentList")
-      )
-    ) {
-      return;
-    }
-    tempUserNameList = this.$cookies;
-    tempPaymentList = this.$cookies;
-
-    if (tempUserNameList === "" || tempPaymentList === "") {
-      return;
-    }
-    this.userNameList = tempUserNameList.get("userNameList").split(",");
-    tempPaymentList = tempPaymentList.map(function(paymentStr) {
-      return Number(paymentStr);
-    });
-    this.paymentList = tempPaymentList.get("paymentList").split(",");
+    this.updateUserInfoFromCookie();
   },
 };
 </script>
