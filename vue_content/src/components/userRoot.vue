@@ -155,77 +155,79 @@ export default {
       // });
     },
     updateUserInfoFromCookie: function() {
-      this.$nextTick(function() {
-        // どちらかのキーがなかったら中止
-        if (
-          !this.$cookies.isKey("userNameList") ||
-          !this.$cookies.isKey("paymentList")
-        ) {
-          this.userNameList = [];
-          this.paymentList = [];
-          return;
-        }
-        let tempUserNameListCookie = this.$cookies.get("userNameList");
-        let tempPaymentListCookie = this.$cookies.get("paymentList");
+      // どちらかのキーがなかったら中止
+      if (
+        !this.$cookies.isKey("userNameList") ||
+        !this.$cookies.isKey("paymentList")
+      ) {
+        this.userNameList = [];
+        this.paymentList = [];
+        return;
+      }
+      let tempUserNameListCookie = this.$cookies.get("userNameList");
+      let tempPaymentListCookie = this.$cookies.get("paymentList");
 
-        if (tempUserNameListCookie === "" || tempPaymentListCookie === "") {
-          alert("データが破損しています。");
-          this.userNameList = [];
-          this.paymentList = [];
-          return;
-        }
-        this.userNameList = tempUserNameListCookie.split(",");
-        let tempPaymentList = tempPaymentListCookie.split(",");
-        this.paymentList = tempPaymentList.map(function(paymentStr) {
-          return Number(paymentStr);
-        });
+      if (tempUserNameListCookie === null || tempPaymentListCookie === null) {
+        alert("データが破損しています。");
+        this.userNameList = [];
+        this.paymentList = [];
+        return;
+      }
+      this.userNameList = tempUserNameListCookie.split(",");
+      let tempPaymentList = tempPaymentListCookie.split(",");
+      this.paymentList = tempPaymentList.map(function(paymentStr) {
+        return Number(paymentStr);
       });
     },
     setUserInfoToCookie: function() {
-      this.$nextTick(function() {
-        this.$cookies.set("userNameList", this.userNameList);
-        this.$cookies.set("paymentList", this.paymentList);
-      });
+      this.$cookies.set("userNameList", this.userNameList);
+      this.$cookies.set("paymentList", this.paymentList);
     },
-    updataUserInfoFromDB: function() {
-      this.$nextTick(function() {
-        const axiosConfig = {
-          method: "get",
-          url: "getUserInfo",
-          responseType: "json",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        };
+    updataUserInfoFromDB: function(sessionName) {
+      const axiosConfig = {
+        method: "post",
+        url: "getUserInfo",
+        responseType: "json",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { sessionName: sessionName },
+      };
 
-        let _this = this;
-        axios(axiosConfig)
-          .then(function(response) {
-            console.log(response.data.result);
-            _this.userNameList = response.data.userNameList;
-            _this.userNameList = response.data.paymentList;
-          })
-          .catch(function(error) {
-            console.log(error);
-          })
-          .finally(function() {
-            _this = null;
-          });
-      });
+      let _this = this;
+      axios(axiosConfig)
+        .then(function(response) {
+          console.log(response.data.userNameList);
+          console.log(response.data.paymentList);
+          _this.userNameList = response.data.userNameList;
+          _this.paymentList = response.data.paymentList;
+        })
+        .catch(function(error) {
+          console.log(error);
+        })
+        .finally(function() {
+          _this = null;
+        });
+    },
+    updateUserInfo: function() {
+      const sessionName = this.$route.query.sessionName;
+      // クエリパラメータにsessionNameが適切にあるか
+      if (sessionName !== undefined && sessionName !== "") {
+        this.updataUserInfoFromDB(sessionName);
+      } else {
+        this.updateUserInfoFromCookie();
+      }
     },
   },
   updated: function() {
-    this.setUserInfoToCookie();
+    this.$nextTick(function() {
+      this.setUserInfoToCookie();
+    });
   },
   mounted: function() {
-    if (
-      this.$route.query.sessionName !== undefined &&
-      this.$route.query.sessionName !== ""
-    ) {
-      this.updataUserInfoFromDB();
-    } else {
-      this.updateUserInfoFromCookie();
-    }
+    this.$nextTick(function() {
+      this.updateUserInfo();
+    });
   },
 };
 </script>

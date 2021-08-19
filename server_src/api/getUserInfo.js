@@ -23,21 +23,26 @@ router.post("/", function (req, res) {
       values: [sessionName],
     };
 
-    client.query(query_session_master).then(function (result) {
-      console.log(result);
-      // for (let un = 0; un < userNameList.length; un++) {
-      //   const name = userNameList[un];
-      //   const payment = paymentList[un];
-      //   const query_users = {
-      //     text: "INSERT INTO users(session_name, user_name, user_payment) VALUES($1, $2, $3)",
-      //     values: [sessionName, name, payment],
-      //   };
-      //   client.query(query_users).then(function (result) {
-      //     console.log(result);
-      //     res.send(constants.appURL + "?sessionName=" + sessionName);
-      //   });
-      // }
-    });
+    let userNameList = [];
+    let paymentList = [];
+    client
+      .query(query_session_master)
+      .then(function (result) {
+        for (let un = 0; un < result.rows.length; un++) {
+          userNameList.push(result.rows[un].user_name);
+          paymentList.push(result.rows[un].user_payment);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        res.send(constants.error);
+      })
+      .finally(function () {
+        res.send({
+          userNameList: userNameList,
+          paymentList: paymentList,
+        });
+      });
   } catch (e) {
     console.log(e);
   }
