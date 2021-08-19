@@ -19,7 +19,7 @@ router.post("/", function (req, res) {
     client.connect();
 
     const query_session_master = {
-      // text: "INSERT INTO session_master(session_name, pass_hash, create_time, update_time) VALUES($1, $2, now(), now())",
+      text: "SELECT user_name, user_payment FROM users WHERE session_name = $1",
       values: [sessionName],
     };
 
