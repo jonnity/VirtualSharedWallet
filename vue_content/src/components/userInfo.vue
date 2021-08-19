@@ -37,7 +37,7 @@
       <v-row class="ml-1">
         <v-col class="pa-1 mb-3">
           <span v-if="userSplitPayment < 0" class="class_loss">
-            {{ Math.abs(userSplitPayment) | floorToTenths }}円 建て替え中
+            {{ Math.abs(userSplitPayment) | floorToTenths }}円 立て替え中
           </span>
           <span v-else-if="userSplitPayment > 0" class="class_profit">
             {{ Math.abs(userSplitPayment) | floorToTenths }}円 支払うと割り勘
