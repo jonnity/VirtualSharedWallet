@@ -23,9 +23,13 @@ router.post("/", function (req, res) {
       "'" +
       sessionName +
       "'";
+    const queryCheckSessionName = {
+      text: "SELECT session_name FROM session_master WHERE session_name=$1",
+      values: [sessionName],
+    };
 
     client
-      .query(query)
+      .query(queryCheckSessionName)
       .then(function (result) {
         // セッション名で検索して結果があるかどうか
         const isAlreadyExist = result.rows[0] !== undefined;

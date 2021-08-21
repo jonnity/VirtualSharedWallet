@@ -22,21 +22,24 @@ router.post("/", function (req, res) {
   try {
     client.connect();
 
-    const query_session_master = {
+    const queryResisterSession = {
       text: "INSERT INTO session_master(session_name, pass_hash, create_time, update_time) VALUES($1, $2, now(), now())",
       values: [sessionName, ""],
     };
 
-    client.query(query_session_master).then(function (result) {
+    client.query(queryResisterSession).then(function (result) {
+      //
+      // パスワードもあったら，ここでcreate_timeをソルトにしてハッシュを保存する
+      //
       console.log(result);
       for (let un = 0; un < userNameList.length; un++) {
         const name = userNameList[un];
         const payment = paymentList[un];
-        const query_users = {
+        const queryResisterUserInfo = {
           text: "INSERT INTO users(session_name, user_name, user_payment) VALUES($1, $2, $3)",
           values: [sessionName, name, payment],
         };
-        client.query(query_users).then(function (result) {
+        client.query(queryResisterUserInfo).then(function (result) {
           console.log(result);
           res.send(constants.appURL + "?sessionName=" + sessionName);
         });

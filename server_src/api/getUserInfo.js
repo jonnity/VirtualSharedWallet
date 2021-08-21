@@ -18,7 +18,7 @@ router.post("/", function (req, res) {
   try {
     client.connect();
 
-    const query_session_master = {
+    const queryGetUserInfo = {
       text: "SELECT user_name, user_payment FROM users WHERE session_name = $1",
       values: [sessionName],
     };
@@ -26,7 +26,7 @@ router.post("/", function (req, res) {
     let userNameList = [];
     let paymentList = [];
     client
-      .query(query_session_master)
+      .query(queryGetUserInfo)
       .then(function (result) {
         for (let un = 0; un < result.rows.length; un++) {
           userNameList.push(result.rows[un].user_name);
