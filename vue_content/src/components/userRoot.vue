@@ -132,9 +132,9 @@ export default {
         userNameList: this.userNameList,
         paymentList: this.paymentList,
       };
-      const axiosConfig = {
+      const axiosConfigToShare = {
         method: "post",
-        url: "shareSession",
+        url: "dbAPI/resisterSession",
         responseType: "json",
         headers: {
           "Content-Type": "application/json",
@@ -143,7 +143,7 @@ export default {
       };
 
       // let _this = this;
-      axios(axiosConfig)
+      axios(axiosConfigToShare)
         .then(function(response) {
           console.log(response.data.result);
         })
@@ -184,9 +184,9 @@ export default {
       this.$cookies.set("paymentList", this.paymentList);
     },
     updataUserInfoFromDB: function(sessionName) {
-      const axiosConfig = {
+      const axiosConfigToGetUserInfo = {
         method: "post",
-        url: "getUserInfo",
+        url: "dbAPI/getUserInfo",
         responseType: "json",
         headers: {
           "Content-Type": "application/json",
@@ -195,10 +195,8 @@ export default {
       };
 
       let _this = this;
-      axios(axiosConfig)
+      axios(axiosConfigToGetUserInfo)
         .then(function(response) {
-          console.log(response.data.userNameList);
-          console.log(response.data.paymentList);
           _this.userNameList = response.data.userNameList;
           _this.paymentList = response.data.paymentList;
         })

@@ -32,22 +32,18 @@ export default {
   computed: {},
   methods: {
     checkSessionNameAndEmitEvent() {
-      // const params = new URLSearchParams();
-      // params.append("sessionName", this.sessionName);
-
-      const axiosConfig = {
+      const axiosConfigCheckSessionName = {
         method: "post",
-        url: "checkSessionName",
+        url: "dbAPI/checkSessionName",
         responseType: "json",
         headers: {
           "Content-Type": "application/json",
         },
-        // data: params,
         data: { sessionName: this.sessionName },
       };
 
       let _this = this;
-      axios(axiosConfig)
+      axios(axiosConfigCheckSessionName)
         .then(function(response) {
           console.log(response.data.result);
           if (response.data.result === constants.sessionNameDuplicateError) {

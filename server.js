@@ -3,17 +3,13 @@ const serveStatic = require("serve-static");
 const path = require("path");
 const history = require("connect-history-api-fallback");
 
-const checkSessionNameDuplicateRouter = require("./server_src/api/checkSessionNameDuplicate");
-const resisterSessionAndShareRouter = require("./server_src/api/resisterSessionAndShare");
-const getUserInfoRouter = require("./server_src/api/getUserInfo");
+const dbAPI = require("./server_src/dbAPI");
 
 const app = express();
 app.use(history());
 app.use(express.json());
 
-app.use("/checkSessionName", checkSessionNameDuplicateRouter);
-app.use("/shareSession", resisterSessionAndShareRouter);
-app.use("/getUserInfo", getUserInfoRouter);
+app.use("/dbAPI", dbAPI);
 
 app.use("/", serveStatic(path.join(__dirname, "./vue_content/dist")));
 app.get("/", function (req, res) {
