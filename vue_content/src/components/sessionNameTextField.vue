@@ -5,6 +5,7 @@
     filled
     placeholder="夏旅行20XX"
     height="40px"
+    hide-details
     :value="value"
     @input="$emit('input', $event)"
   ></v-text-field>

@@ -7,7 +7,7 @@
       <v-row class="pa-3">
         <moneyTextField v-model.number="paymentAmount"></moneyTextField>
       </v-row>
-      <v-row>
+      <v-row align="center">
         <v-col>
           <v-select
             :items="userNameList"

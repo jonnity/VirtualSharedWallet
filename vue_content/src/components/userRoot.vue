@@ -12,6 +12,7 @@
         @repaymentEvent="calcRepayment"
         @clickHelpButton="$emit('clickHelpButton')"
         @shareEvent="uploadAndShare"
+        @loadEvent="loadUserInfo"
       ></appBar>
       <v-row class="pa-2">
         <div v-for="un in userIterator" :key="un">
@@ -304,7 +305,6 @@ export default {
       let _this = this;
       axios(axiosConfigToShare)
         .then(function(response) {
-          console.log(response.data);
           if (response.data.result === constants.success) {
             _this.shareLink = response.data.shareLink;
             _this.shareLinkFlag = true;
@@ -317,6 +317,9 @@ export default {
         .finally(function() {
           _this = null;
         });
+    },
+    loadUserInfo: function(sessionName) {
+      window.location.href = constants.appURL + "?sessionName=" + sessionName;
     },
     updateUserInfoFromCookie: function() {
       // どちらかのキーがなかったら中止
