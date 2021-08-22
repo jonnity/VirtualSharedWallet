@@ -46,7 +46,7 @@ export default {
       axios(axiosConfigCheckSessionName)
         .then(function(response) {
           console.log(response.data.result);
-          if (response.data.result === constants.sessionNameDuplicateError) {
+          if (response.data.result === constants.sessionNameDuplicate) {
             _this.errorMessage = "そのセッション名は使われています";
             _this.isError = true;
           } else {

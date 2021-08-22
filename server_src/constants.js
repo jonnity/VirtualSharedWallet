@@ -1,5 +1,5 @@
 module.exports = {
-  sessionNameDuplicateError: "session name is duplicated",
+  sessionNameDuplicate: "snd",
   success: "success",
   error: "error",
 

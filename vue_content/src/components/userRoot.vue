@@ -1,54 +1,65 @@
 <template>
-  <v-container>
-    <appBar
-      :userNameList="userNameList"
-      @appendUserEvent="appendUser"
-      @repaymentEvent="calcRepayment"
-      @clickHelpButton="$emit('clickHelpButton')"
-      @shareEvent="uploadAndShare"
-    ></appBar>
-    <v-row class="pa-2">
-      <div v-for="un in userIterator" :key="un">
-        <userInfo
-          :userName="userNameList[un - 1]"
-          :userPayedAmount="paymentList[un - 1]"
-          :averagePayment="averagePayment"
-          @userPayEvent="calcTotalPayment"
-          @deleteUserEvent="deleteUser"
-        ></userInfo>
+  <div>
+    <shareLinkModal
+      v-if="shareLinkFlag"
+      :shareLink="shareLink"
+      @closeModal="shareLinkFlag = false"
+    ></shareLinkModal>
+    <v-container>
+      <appBar
+        :userNameList="userNameList"
+        @appendUserEvent="appendUser"
+        @repaymentEvent="calcRepayment"
+        @clickHelpButton="$emit('clickHelpButton')"
+        @shareEvent="uploadAndShare"
+      ></appBar>
+      <v-row class="pa-2">
+        <div v-for="un in userIterator" :key="un">
+          <userInfo
+            :userName="userNameList[un - 1]"
+            :userPayedAmount="paymentList[un - 1]"
+            :averagePayment="averagePayment"
+            @userPayEvent="calcTotalPayment"
+            @deleteUserEvent="deleteUser"
+          ></userInfo>
+        </div>
+      </v-row>
+      <div class="pa-6">
+        <p :class="{ disabledContent: userNameList.length < 2 }">
+          総額：{{ totalPayment }}円
+        </p>
+        <p :class="{ disabledContent: userNameList.length < 2 }">
+          一人あたり：{{ averagePayment }}円
+        </p>
+        <p
+          v-if="userNameList.length >= 2 && hasFraction"
+          :class="{ disabledContent: userNameList.length < 2 }"
+        >
+          誰かが「{{ userNameList.length }}で割って{{
+            mod
+          }}余る数字」円払うと端数がなくなります
+        </p>
+        <p
+          v-if="userNameList.length < 2 || !hasFraction"
+          :class="{ disabledContent: userNameList.length < 2 }"
+        >
+          端数はありません
+        </p>
       </div>
-    </v-row>
-    <div class="pa-6">
-      <p :class="{ disabledContent: userNameList.length < 2 }">
-        総額：{{ totalPayment }}円
-      </p>
-      <p :class="{ disabledContent: userNameList.length < 2 }">
-        一人あたり：{{ averagePayment }}円
-      </p>
-      <p
-        v-if="userNameList.length >= 2 && hasFraction"
-        :class="{ disabledContent: userNameList.length < 2 }"
-      >
-        誰かが「{{ userNameList.length }}で割って{{
-          mod
-        }}余る数字」円払うと端数がなくなります
-      </p>
-      <p
-        v-if="userNameList.length < 2 || !hasFraction"
-        :class="{ disabledContent: userNameList.length < 2 }"
-      >
-        端数はありません
-      </p>
-    </div>
-  </v-container>
+    </v-container>
+  </div>
 </template>
 
 <script>
 import Vue from "vue";
-import userInfo from "./userInfo.vue";
-import appBar from "./appBar.vue";
 import VueCookies from "vue-cookies";
 import axios from "axios";
+
+import userInfo from "./userInfo.vue";
+import appBar from "./appBar.vue";
+import shareLinkModal from "./shareLinkModal.vue";
+
+import constants from "./../constants";
 
 Vue.use(VueCookies);
 
@@ -57,11 +68,14 @@ export default {
   components: {
     userInfo,
     appBar,
+    shareLinkModal,
   },
   data() {
     return {
       userNameList: [],
       paymentList: [],
+      shareLink: "",
+      shareLinkFlag: false,
     };
   },
   computed: {
@@ -142,17 +156,21 @@ export default {
         data: data,
       };
 
-      // let _this = this;
+      let _this = this;
       axios(axiosConfigToShare)
         .then(function(response) {
-          console.log(response.data.result);
+          console.log(response.data);
+          if (response.data.result === constants.success) {
+            _this.shareLink = response.data.shareLink;
+            _this.shareLinkFlag = true;
+          }
         })
         .catch(function(error) {
           console.log(error);
+        })
+        .finally(function() {
+          _this = null;
         });
-      // .finally(function() {
-      //   _this = null;
-      // });
     },
     updateUserInfoFromCookie: function() {
       // どちらかのキーがなかったら中止
