@@ -5,7 +5,7 @@ const app = express();
 
 const { Client } = require("pg");
 
-app.get("/", function (req, res, next) {
+function clientConnect(sessionName) {
   const client = new Client({
     database: "test",
     user: "postgres",
@@ -15,20 +15,25 @@ app.get("/", function (req, res, next) {
   });
   client.connect();
   // 登録済みのセッション名の一覧を取得するクエリ
-  client
-    .query(
-      "select session_name from session_master where session_name=" +
-        "'test_session3'"
-    )
-    .then(function (result) {
-      console.log(result.rows[0]);
-      console.log(result.rows[0] === undefined);
-    });
-  // ユーザー情報取るクエリ
-  // .query("SELECT user_name, user_payment FROM users")
-  // .then((result) => res.send(result.rows))
-  // .catch((e) => console.error(e.stack))
-  // .then(() => client.end());
+  return client.query({
+    text: "select session_name from session_master where session_name=$1",
+    values: [sessionName],
+  });
+}
+
+app.get("/", function (req, res, next) {
+  // client.connect();
+  // // 登録済みのセッション名の一覧を取得するクエリ
+  // client
+  //   .query({
+  //     text: "select session_name from session_master where session_name=$1",
+  //     values: ["test_session"],
+  //   })
+  clientConnect("test_session").then(function (result) {
+    console.log(result.rows[0]);
+    console.log(result.rows[0] === undefined);
+    res.send(result);
+  });
 });
 
 app.listen("3001", () => {
