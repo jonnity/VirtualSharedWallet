@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const { query } = require("express");
+const e = require("express");
 const express = require("express");
 const router = express.Router();
 const { Client } = require("pg");
@@ -64,11 +65,26 @@ function deleteUser(client, sessionName, userName) {
 }
 
 function updatePayment(client, sessionName, userName, paymentAmount) {
-  const queryPayment = {
+  const queryRepayment = {
     text: "UPDATE users SET user_payment = user_payment + $3 WHERE session_name = $1 AND user_name = $2",
     values: [sessionName, userName, paymentAmount],
   };
-  return client.query(queryPayment);
+  return client.query(queryRepayment);
+}
+
+function updateUpdateTime(client, sessionName) {
+  const queryUpdateTime = {
+    text: "UPDATE session_master SET update_time = now() WHERE session_name = $1",
+    values: [sessionName],
+  };
+  client
+    .query(queryUpdateTime)
+    .then(function (result) {
+      console.log(result);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 }
 
 router.post("/checkSessionName", function (req, res) {
@@ -165,6 +181,7 @@ router.post("/appendUser", function (req, res) {
     resisterUserInfo(client, sessionName, userName, 0)
       .then(function (result) {
         console.log(result);
+        updateUpdateTime(client, sessionName);
         res.send({ result: constants.success });
       })
       .catch(function (error) {
@@ -184,6 +201,7 @@ router.post("/deleteUser", function (req, res) {
     deleteUser(client, sessionName, userName)
       .then(function (result) {
         console.log(result);
+        updateUpdateTime(client, sessionName);
         res.send({ result: constants.success });
       })
       .catch(function (error) {
@@ -204,6 +222,7 @@ router.post("/updatePayment", function (req, res) {
     updatePayment(client, sessionName, userName, paymentAmount)
       .then(function (result) {
         console.log(result);
+        updateUpdateTime(client, sessionName);
         res.send({ result: constants.success });
       })
       .catch(function (error) {
@@ -227,6 +246,7 @@ router.post("/repayment", function (req, res) {
         updatePayment(client, sessionName, receiverName, -paymentAmount)
           .then(function (result) {
             console.log(result);
+            updateUpdateTime(client, sessionName);
           })
           .catch(function (error) {
             console.log(error);
