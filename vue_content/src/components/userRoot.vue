@@ -116,9 +116,40 @@ export default {
   },
   methods: {
     appendUser: function(appendedUserName) {
-      
+      // ローカルの処理
       this.userNameList.push(appendedUserName);
       this.paymentList.push(0);
+      // sessionNameがあったらDBアクセスしてその状態に上書き
+      if (this.existSessionNameCookie) {
+        const sessionName = this.$cookies.get(constants.sessionNameKey);
+        const data = {
+          sessionName: sessionName,
+          userName: appendedUserName,
+        };
+        const axiosConfigAppendUser = {
+          method: "post",
+          url: "dbAPI/appendUser",
+          responseType: "json",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: data,
+        };
+
+        let _this = this;
+        axios(axiosConfigAppendUser)
+          .then(function(response) {
+            if (response === constants.success) {
+              _this.updataUserInfoFromDB(sessionName);
+            }
+          })
+          .catch(function(error) {
+            console.log(error);
+          })
+          .finally(function() {
+            _this = null;
+          });
+      }
     },
     calcTotalPayment: function(paymentInfo) {
       const paymentUserIndex = this.userNameList.indexOf(paymentInfo.name);
