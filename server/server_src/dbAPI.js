@@ -215,4 +215,33 @@ router.post("/updatePayment", function (req, res) {
   }
 });
 
+router.post("/repayment", function (req, res) {
+  const client = clientConnect();
+  try {
+    const sessionName = req.body.sessionName;
+    const payerName = req.body.payer;
+    const receiverName = req.body.receiver;
+    const paymentAmount = req.body.paymentAmount;
+    updatePayment(client, sessionName, payerName, paymentAmount)
+      .then(function (result) {
+        updatePayment(client, sessionName, receiverName, -paymentAmount)
+          .then(function (result) {
+            console.log(result);
+          })
+          .catch(function (error) {
+            console.log(error);
+            res.status(500).send({ result: constants.error });
+          });
+        console.log(result);
+        res.send({ result: constants.success });
+      })
+      .catch(function (error) {
+        console.log(error);
+        res.status(500).send({ result: constants.error });
+      });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 module.exports = router;

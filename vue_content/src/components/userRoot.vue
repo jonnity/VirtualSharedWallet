@@ -198,6 +198,8 @@ export default {
     calcRepayment: function(repaymentInfo) {
       const payerIndex = this.userNameList.indexOf(repaymentInfo.payer);
       const receiverIndex = this.userNameList.indexOf(repaymentInfo.receiver);
+
+      // ローカル処理
       Vue.set(
         this.paymentList,
         payerIndex,
@@ -208,6 +210,41 @@ export default {
         receiverIndex,
         this.paymentList[receiverIndex] - repaymentInfo.amount
       );
+      // DB処理
+      if (this.existSessionNameCookie) {
+        const sessionName = this.$cookies.get(constants.sessionNameKey);
+
+        const data = {
+          sessionName: sessionName,
+          payer: repaymentInfo.payer,
+          receiver: repaymentInfo.receiver,
+          paymentAmount: repaymentInfo.amount,
+        };
+        const axiosConfigUpdatePayment = {
+          method: "post",
+          url: "dbAPI/repayment",
+          responseType: "json",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: data,
+        };
+
+        let _this = this;
+        axios(axiosConfigUpdatePayment)
+          .then(function(response) {
+            if (response === constants.success) {
+              _this.updataUserInfoFromDB(sessionName);
+            }
+          })
+          .catch(function(error) {
+            this.$cookies.remove(constants.sessionNameKey);
+            console.log(error);
+          })
+          .finally(function() {
+            _this = null;
+          });
+      }
     },
     deleteUser: function(userName) {
       const userIndex = this.userNameList.indexOf(userName);
