@@ -144,6 +144,7 @@ export default {
             }
           })
           .catch(function(error) {
+            this.$cookies.remove(constants.sessionNameKey);
             console.log(error);
           })
           .finally(function() {
@@ -175,8 +176,42 @@ export default {
     },
     deleteUser: function(userName) {
       const userIndex = this.userNameList.indexOf(userName);
+
+      // ローカルの処理
       this.userNameList.splice(userIndex, 1);
       this.paymentList.splice(userIndex, 1);
+
+      if (this.existSessionNameCookie) {
+        const sessionName = this.$cookies.get(constants.sessionNameKey);
+        const data = {
+          sessionName: sessionName,
+          userName: userName,
+        };
+        const axiosConfigDeleteUser = {
+          method: "post",
+          url: "dbAPI/deleteUser",
+          responseType: "json",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: data,
+        };
+
+        let _this = this;
+        axios(axiosConfigDeleteUser)
+          .then(function(response) {
+            if (response === constants.success) {
+              _this.updataUserInfoFromDB(sessionName);
+            }
+          })
+          .catch(function(error) {
+            this.$cookies.remove(constants.sessionNameKey);
+            console.log(error);
+          })
+          .finally(function() {
+            _this = null;
+          });
+      }
     },
     uploadAndShare: function(sessionName) {
       const data = {
@@ -258,6 +293,7 @@ export default {
           _this.paymentList = response.data.paymentList;
         })
         .catch(function(error) {
+          this.$cookies.remove(constants.sessionNameKey);
           console.log(error);
         })
         .finally(function() {

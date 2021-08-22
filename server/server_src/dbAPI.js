@@ -47,12 +47,20 @@ function resisterSession(client, sessionName, password) {
   return client.query(queryResisterSession);
 }
 
-function resisterUserInfo(client, sessionName, name, payment) {
+function resisterUserInfo(client, sessionName, userName, payment) {
   const queryResisterUserInfo = {
     text: "INSERT INTO users(session_name, user_name, user_payment) VALUES($1, $2, $3)",
-    values: [sessionName, name, payment],
+    values: [sessionName, userName, payment],
   };
   return client.query(queryResisterUserInfo);
+}
+
+function deleteUser(client, sessionName, userName) {
+  const queryDeleteUser = {
+    text: "DELETE FROM users WHERE session_name = $1 AND user_name = $2",
+    values: [sessionName, userName],
+  };
+  return client.query(queryDeleteUser);
 }
 
 router.post("/checkSessionName", function (req, res) {
@@ -147,6 +155,25 @@ router.post("/appendUser", function (req, res) {
     const sessionName = req.body.sessionName;
     const userName = req.body.userName;
     resisterUserInfo(client, sessionName, userName, 0)
+      .then(function (result) {
+        console.log(result);
+        res.send({ result: constants.success });
+      })
+      .catch(function (error) {
+        console.log(error);
+        res.status(500).send({ result: constants.error });
+      });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.post("/deleteUser", function (req, res) {
+  const client = clientConnect();
+  try {
+    const sessionName = req.body.sessionName;
+    const userName = req.body.userName;
+    deleteUser(client, sessionName, userName)
       .then(function (result) {
         console.log(result);
         res.send({ result: constants.success });
