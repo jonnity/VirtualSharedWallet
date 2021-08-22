@@ -43,6 +43,7 @@
       @appendUserEvent="appendEvent"
       @repaymentEvent="repaymentEvent"
       @shareEvent="shareEvent"
+      @loadEvent="loadEvent"
     ></router-view>
   </div>
 </template>
@@ -75,14 +76,17 @@ export default {
   },
   props: ["userNameList"],
   methods: {
-    appendEvent: function(appendedUserName) {
+    appendEvent(appendedUserName) {
       this.$emit("appendUserEvent", appendedUserName);
     },
-    repaymentEvent: function(repaymentInfo) {
+    repaymentEvent(repaymentInfo) {
       this.$emit("repaymentEvent", repaymentInfo);
     },
-    shareEvent: function(sessionName) {
+    shareEvent(sessionName) {
       this.$emit("shareEvent", sessionName);
+    },
+    loadEvent(sessionName) {
+      this.$emit("loadEvent", sessionName);
     },
   },
 };
