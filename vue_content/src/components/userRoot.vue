@@ -107,9 +107,16 @@ export default {
       }
       return totalPayment;
     },
+    existSessionNameCookie() {
+      return (
+        this.$cookies.isKey(constants.sessionNameKey) &&
+        this.$cookies.get(constants.sessionNameKey) !== ""
+      );
+    },
   },
   methods: {
     appendUser: function(appendedUserName) {
+      
       this.userNameList.push(appendedUserName);
       this.paymentList.push(0);
     },
@@ -163,6 +170,7 @@ export default {
           if (response.data.result === constants.success) {
             _this.shareLink = response.data.shareLink;
             _this.shareLinkFlag = true;
+            this.$cookies.set(constants.sessionNameKey, sessionName);
           }
         })
         .catch(function(error) {
@@ -227,9 +235,21 @@ export default {
     },
     updateUserInfo: function() {
       const sessionName = this.$route.query.sessionName;
-      // クエリパラメータにsessionNameが適切にあるか
-      if (sessionName !== undefined && sessionName !== "") {
+      // クエリパラメータにsessionNameがあるか
+      const existSessionNameQuery =
+        sessionName !== undefined && sessionName !== "";
+      // cookieにsessionNameがあるか
+      // const existSessionNameCookie =
+      //   this.$cookies.isKey(constants.sessionNameKey) &&
+      //   this.$cookies.get(constants.sessionNameKey) !== "";
+
+      // クエリパラメータからDB > cookieからDB > cookieの情報だけで更新
+      // の優先順位
+      if (existSessionNameQuery) {
         this.updataUserInfoFromDB(sessionName);
+        this.$cookies.set(constants.sessionNameKey, sessionName);
+      } else if (this.existSessionNameCookie) {
+        this.updataUserInfoFromDB(this.$cookies.get(constants.sessionNameKey));
       } else {
         this.updateUserInfoFromCookie();
       }
