@@ -286,9 +286,10 @@ export default {
           });
       }
     },
-    uploadAndShare: function(sessionName) {
+    uploadAndShare: function(sessionInfo) {
       const data = {
-        sessionName: sessionName,
+        sessionName: sessionInfo.sessionName,
+        password: sessionInfo.password,
         userNameList: this.userNameList,
         paymentList: this.paymentList,
       };
@@ -308,7 +309,10 @@ export default {
           if (response.data.result === constants.success) {
             _this.shareLink = response.data.shareLink;
             _this.shareLinkFlag = true;
-            this.$cookies.set(constants.sessionNameKey, sessionName);
+            this.$cookies.set(
+              constants.sessionNameKey,
+              sessionInfo.sessionName
+            );
           }
         })
         .catch(function(error) {

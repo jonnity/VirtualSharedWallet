@@ -42,7 +42,7 @@ function getUserInfo(client, sessionName) {
 
 function resisterSession(client, sessionName, password) {
   const queryResisterSession = {
-    text: "INSERT INTO session_master(session_name, pass_hash, create_time, update_time) VALUES($1, crypt('$2', gen_salt('bf')), now(), now())",
+    text: "INSERT INTO session_master(session_name, pass_hash, create_time, update_time) VALUES($1, crypt($2, gen_salt('bf')), now(), now())",
     values: [sessionName, password],
   };
   return client.query(queryResisterSession);
@@ -143,10 +143,11 @@ router.post("/resisterSession", function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
+    const password = req.body.password;
     const userNameList = req.body.userNameList;
     const paymentList = req.body.paymentList;
 
-    resisterSession(client, sessionName, "")
+    resisterSession(client, sessionName, password)
       .then(function (result) {
         console.log(result);
         for (let un = 0; un < userNameList.length; un++) {
