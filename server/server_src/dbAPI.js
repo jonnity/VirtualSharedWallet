@@ -63,6 +63,14 @@ function deleteUser(client, sessionName, userName) {
   return client.query(queryDeleteUser);
 }
 
+function updatePayment(client, sessionName, userName, paymentAmount) {
+  const queryPayment = {
+    text: "UPDATE users SET user_payment = user_payment + $3 WHERE session_name = $1 AND user_name = $2",
+    values: [sessionName, userName, paymentAmount],
+  };
+  return client.query(queryPayment);
+}
+
 router.post("/checkSessionName", function (req, res) {
   const client = clientConnect();
   try {
@@ -174,6 +182,26 @@ router.post("/deleteUser", function (req, res) {
     const sessionName = req.body.sessionName;
     const userName = req.body.userName;
     deleteUser(client, sessionName, userName)
+      .then(function (result) {
+        console.log(result);
+        res.send({ result: constants.success });
+      })
+      .catch(function (error) {
+        console.log(error);
+        res.status(500).send({ result: constants.error });
+      });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.post("/updatePayment", function (req, res) {
+  const client = clientConnect();
+  try {
+    const sessionName = req.body.sessionName;
+    const userName = req.body.userName;
+    const paymentAmount = req.body.paymentAmount;
+    updatePayment(client, sessionName, userName, paymentAmount)
       .then(function (result) {
         console.log(result);
         res.send({ result: constants.success });

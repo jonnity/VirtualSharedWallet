@@ -154,11 +154,46 @@ export default {
     },
     calcTotalPayment: function(paymentInfo) {
       const paymentUserIndex = this.userNameList.indexOf(paymentInfo.name);
+
+      // ローカル処理
       Vue.set(
         this.paymentList,
         paymentUserIndex,
         this.paymentList[paymentUserIndex] + paymentInfo.amount
       );
+      if (this.existSessionNameCookie) {
+        const sessionName = this.$cookies.get(constants.sessionNameKey);
+
+        const data = {
+          sessionName: sessionName,
+          userName: paymentInfo.name,
+          paymentAmount: paymentInfo.amount,
+        };
+        const axiosConfigUpdatePayment = {
+          method: "post",
+          url: "dbAPI/updatePayment",
+          responseType: "json",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: data,
+        };
+
+        let _this = this;
+        axios(axiosConfigUpdatePayment)
+          .then(function(response) {
+            if (response === constants.success) {
+              _this.updataUserInfoFromDB(sessionName);
+            }
+          })
+          .catch(function(error) {
+            this.$cookies.remove(constants.sessionNameKey);
+            console.log(error);
+          })
+          .finally(function() {
+            _this = null;
+          });
+      }
     },
     calcRepayment: function(repaymentInfo) {
       const payerIndex = this.userNameList.indexOf(repaymentInfo.payer);
