@@ -11,7 +11,11 @@
           <span class="px-1">パスワードを設定する</span>
         </v-row>
         <v-row justify="center">
-          <v-text-field
+          <passwordTextField
+            v-model="password"
+            :enablePassword="enablePassword"
+          ></passwordTextField>
+          <!-- <v-text-field
             v-model="password"
             :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="[rules.required, rules.min8]"
@@ -20,7 +24,7 @@
             @click:append="show = !show"
             :disabled="!enablePassword"
           >
-          </v-text-field>
+          </v-text-field> -->
         </v-row>
         <v-row justify="center">
           <v-btn @click="cancelSharing">
@@ -39,8 +43,12 @@
 </template>
 
 <script>
+import passwordTextField from "./passwordTextField.vue";
 export default {
   name: "shareSessionConfirmModal",
+  components: {
+    passwordTextField,
+  },
   data() {
     return {
       password: "",

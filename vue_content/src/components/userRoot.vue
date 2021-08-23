@@ -153,7 +153,7 @@ export default {
             }
           })
           .catch(function(error) {
-            this.$cookies.remove(constants.sessionNameKey);
+            _this.$cookies.remove(constants.sessionNameKey);
             console.log(error);
           })
           .finally(function() {
@@ -196,7 +196,7 @@ export default {
             }
           })
           .catch(function(error) {
-            this.$cookies.remove(constants.sessionNameKey);
+            _this.$cookies.remove(constants.sessionNameKey);
             console.log(error);
           })
           .finally(function() {
@@ -247,7 +247,7 @@ export default {
             }
           })
           .catch(function(error) {
-            this.$cookies.remove(constants.sessionNameKey);
+            _this.$cookies.remove(constants.sessionNameKey);
             console.log(error);
           })
           .finally(function() {
@@ -286,7 +286,7 @@ export default {
             }
           })
           .catch(function(error) {
-            this.$cookies.remove(constants.sessionNameKey);
+            _this.$cookies.remove(constants.sessionNameKey);
             console.log(error);
           })
           .finally(function() {
@@ -317,7 +317,7 @@ export default {
           if (response.data.result === constants.success) {
             _this.shareLink = response.data.shareLink;
             _this.shareLinkFlag = true;
-            this.$cookies.set(
+            _this.$cookies.set(
               constants.sessionNameKey,
               sessionInfo.sessionName
             );
@@ -380,7 +380,7 @@ export default {
           _this.paymentList = response.data.paymentList;
         })
         .catch(function(error) {
-          this.$cookies.remove(constants.sessionNameKey);
+          _this.$cookies.remove(constants.sessionNameKey);
           console.log(error);
         })
         .finally(function() {
@@ -425,14 +425,14 @@ export default {
         },
         data: data,
       };
-      const _this = this;
+      let _this = this;
       axios(axiosConfig)
         .then(function(response) {
           if (response.result === constants.success) {
             if (response.existPassword) {
               _this.passwordModalFlag = true;
             } else {
-              saveInputedPasswordToCookie("");
+              _this.saveInputedPasswordToCookie("");
             }
           }
         })

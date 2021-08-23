@@ -16,7 +16,10 @@
           </span>
         </v-row>
         <v-row>
-          <passwordTextField v-model="password"></passwordTextField>
+          <passwordTextField
+            v-model="password"
+            :enablePassword="true"
+          ></passwordTextField>
         </v-row>
         <v-row>
           <v-btn @click="closeModal"></v-btn>

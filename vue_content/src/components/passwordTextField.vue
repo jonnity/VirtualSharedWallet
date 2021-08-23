@@ -16,7 +16,7 @@
 <script>
 export default {
   name: "passwordTextField",
-  props: ["value"],
+  props: ["value", "enablePassword"],
   data() {
     return {
       show: false,
