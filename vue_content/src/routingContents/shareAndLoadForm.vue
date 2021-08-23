@@ -120,9 +120,11 @@ export default {
         password: password,
         sessionName: this.sessionName,
       });
+      this.shareFlag = false;
     },
     emitLoadEvent() {
       this.$emit("loadEvent", this.sessionName);
+      this.loadFlag = false;
     },
   },
 };
