@@ -3,6 +3,7 @@ module.exports = {
   success: "success",
   error: "error",
   sessionNameKey: "sessionName",
+  passwordKey: "password",
 
   appURL: "http://localhost:8080",
 };

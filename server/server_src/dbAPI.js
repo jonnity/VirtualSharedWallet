@@ -1,7 +1,5 @@
 require("dotenv").config();
 
-const { query } = require("express");
-const e = require("express");
 const express = require("express");
 const router = express.Router();
 const { Client } = require("pg");
@@ -70,6 +68,14 @@ function updatePayment(client, sessionName, userName, paymentAmount) {
     values: [sessionName, userName, paymentAmount],
   };
   return client.query(queryRepayment);
+}
+
+function checkExistPassword(client, sessionName) {
+  const queryCheckExistPassword = {
+    text: "SELECT (pass_hash = crypt($2, pass_hash)) AS matched FROM session_master WHERE session_name = $1",
+    values: [sessionName, ""],
+  };
+  return client.query(queryCheckExistPassword);
 }
 
 function updateUpdateTime(client, sessionName) {
@@ -263,6 +269,34 @@ router.post("/repayment", function (req, res) {
   } catch (e) {
     console.log(e);
   }
+});
+
+router.post("/checkExistPassword", function (req, res) {
+  const client = clientConnect();
+  try {
+    const sessionName = req.body.sessionName;
+    checkExistPassword(client, sessionName)
+      .then(function (result) {
+        console.log(result);
+        const existPassword = !result.rows[0].matched;
+        res.send({
+          result: constants.success,
+          existPassword: existPassword,
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+        res.status(500).send({ result: constants.error });
+      });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.post("/encryptPasswprd", function (req, res) {
+  const myCipher = require("./myCipher");
+  const plainPassword = req.body.password;
+  res.send({ encryptedPassword: myCipher.myEncrypt(plainPassword) });
 });
 
 module.exports = router;

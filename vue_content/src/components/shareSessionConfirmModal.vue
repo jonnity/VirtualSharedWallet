@@ -20,8 +20,7 @@
             @click:append="show = !show"
             :disabled="!enablePassword"
           >
-            ></v-text-field
-          >
+          </v-text-field>
         </v-row>
         <v-row justify="center">
           <v-btn @click="cancelSharing">
@@ -46,12 +45,6 @@ export default {
     return {
       password: "",
       enablePassword: true,
-      show: false,
-      rules: {
-        required: (value) =>
-          !!value || "パスワードを設定する場合は入力してください",
-        min8: (v) => v.length >= 8 || "8文字以上の文字列を入力してください",
-      },
     };
   },
   methods: {

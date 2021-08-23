@@ -5,6 +5,12 @@
       :shareLink="shareLink"
       @closeModal="shareLinkFlag = false"
     ></shareLinkModal>
+    <passwordModal
+      v-if="passwordModalFlag"
+      :sessionName="loadSessionName"
+      @closeModal="passwordModalFlag = false"
+      @inputPasswordEvent="saveInputedPasswordToCookie"
+    ></passwordModal>
     <v-container>
       <appBar
         :userNameList="userNameList"
@@ -77,6 +83,8 @@ export default {
       paymentList: [],
       shareLink: "",
       shareLinkFlag: false,
+      loadSessionName: "",
+      passwordModalFlag: false,
     };
   },
   computed: {
@@ -392,6 +400,10 @@ export default {
       // クエリパラメータからDB > cookieからDB > cookieの情報だけで更新
       // の優先順位
       if (existSessionNameQuery) {
+        this.loadSessionName = sessionName;
+        // this.passwordModalFlag = true;
+
+        // ここの処理をパスワード認証後に呼ぶ
         this.updataUserInfoFromDB(sessionName);
         this.$cookies.set(constants.sessionNameKey, sessionName);
       } else if (this.existSessionNameCookie) {
@@ -399,6 +411,62 @@ export default {
       } else {
         this.updateUserInfoFromCookie();
       }
+    },
+    checkExistPassword(sessionName) {
+      const data = {
+        sessionName: sessionName,
+      };
+      const axiosConfig = {
+        method: "post",
+        url: "dbAPI/checkExistPassword",
+        responseType: "json",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+      const _this = this;
+      axios(axiosConfig)
+        .then(function(response) {
+          if (response.result === constants.success) {
+            if (response.existPassword) {
+              _this.passwordModalFlag = true;
+            } else {
+              saveInputedPasswordToCookie("");
+            }
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        })
+        .finally(function() {
+          _this = null;
+        });
+    },
+    saveInputedPasswordToCookie(password) {
+      const axiosConfigSaveEncryptedPassword = {
+        method: "post",
+        url: "dbAPI/encryptPassword",
+        responseType: "json",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { password: password },
+      };
+      let _this = this;
+      axios(axiosConfigSaveEncryptedPassword)
+        .then(function(response) {
+          _this.$cookies.set(
+            constants.passwordKey,
+            response.data.encryptedPassword
+          );
+        })
+        .catch(function(error) {
+          console.log(error);
+        })
+        .finally(function() {
+          _this = null;
+        });
     },
   },
   updated: function() {
