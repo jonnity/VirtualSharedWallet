@@ -9,7 +9,7 @@
       v-if="passwordModalFlag"
       :sessionName="loadSessionName"
       @closeModal="passwordModalFlag = false"
-      @inputPasswordEvent="saveInputedPasswordToCookie"
+      @inputPasswordEvent="saveEncryptedPasswordToCookie"
     ></passwordModal>
     <v-container>
       <appBar
@@ -365,6 +365,10 @@ export default {
       this.$cookies.set("paymentList", this.paymentList);
     },
     updataUserInfoFromDB: function(sessionName) {
+      // passwordがcookieになかったら，パスワード要求して終わり
+      // いらない？全体のフロー見ないとわかんない
+      // if (!this.$cookies.isKey(constants.passwordKey)) {
+      // }
       const axiosConfigToGetUserInfo = {
         method: "post",
         url: "dbAPI/getUserInfo",
@@ -386,7 +390,8 @@ export default {
             _this.userNameList = response.data.userNameList;
             _this.paymentList = response.data.paymentList;
           } else if (response.data.result === constants.wrongPassword) {
-            console.log("パスワードが");
+            _this.$cookies.remove(constants.passwordKey);
+            alert("パスワードが違います．");
           }
         })
         .catch(function(error) {
@@ -406,24 +411,42 @@ export default {
       // クエリパラメータからDB > cookieからDB > cookieの情報だけで更新
       // の優先順位
       if (existSessionNameQuery) {
+        this.$cookies.set(constants.sessionNameKey, sessionName);
         this.loadSessionName = sessionName;
         const existPassword = await this.checkExistPassword(
           this.loadSessionName
         );
+
         // パスワードが設定されていて、かつ、cookieに保存されていないときに入力欄を表示
-        this.$cookies.set(constants.sessionNameKey, sessionName);
         if (!existPassword) {
-          this.saveInputedPasswordToCookie("");
+          this.saveEncryptedPasswordToCookie("");
           // ここの処理をパスワード認証（保存）後にも呼ぶ
           this.updataUserInfoFromDB(sessionName);
         } else if (this.$cookies.isKey(constants.passwordKey)) {
           this.updataUserInfoFromDB(sessionName);
         } else {
+          // passwordをcookieに保存してここに戻ってくる
           this.passwordModalFlag = true;
         }
       } else if (this.existSessionNameCookie) {
-        this.updataUserInfoFromDB(this.$cookies.get(constants.sessionNameKey));
+        this.loadSessionName = this.$cookies.get(constants.sessionNameKey);
+        const existPassword = await this.checkExistPassword(
+          this.loadSessionName
+        );
+
+        // パスワードが設定されていて、かつ、cookieに保存されていないときに入力欄を表示
+        if (!existPassword) {
+          this.saveEncryptedPasswordToCookie("");
+          // ここの処理をパスワード認証（保存）後にも呼ぶ
+          this.updataUserInfoFromDB(sessionName);
+        } else if (this.$cookies.isKey(constants.passwordKey)) {
+          this.updataUserInfoFromDB(sessionName);
+        } else {
+          // passwordをcookieに保存してここに戻ってくる
+          this.passwordModalFlag = true;
+        }
       } else {
+        // sessionNameの指定がなければ，cookieから情報を取得
         this.updateUserInfoFromCookie();
       }
     },
@@ -456,7 +479,8 @@ export default {
       // });
       return existPassword;
     },
-    saveInputedPasswordToCookie(password) {
+    saveEncryptedPasswordToCookie(password) {
+      this.passwordModalFlag = false;
       const axiosConfigSaveEncryptedPassword = {
         method: "post",
         url: "dbAPI/encryptPassword",
@@ -473,7 +497,11 @@ export default {
             constants.passwordKey,
             response.data.encryptedPassword
           );
-          _this.updataUserInfoFromDB;
+          if (_this.existSessionNameCookie) {
+            _this.updataUserInfoFromDB(
+              _this.$cookies.get(constants.sessionNameKey)
+            );
+          }
         })
         .catch(function(error) {
           console.log(error);
@@ -482,6 +510,7 @@ export default {
           _this = null;
         });
     },
+    // inputedPassword(password) {},
   },
   updated: function() {
     this.$nextTick(function() {

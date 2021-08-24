@@ -22,8 +22,8 @@
           ></passwordTextField>
         </v-row>
         <v-row>
-          <v-btn @click="closeModal"></v-btn>
-          <v-btn @click="$emit('inputPasswordEvent', password)"></v-btn>
+          <v-btn @click="closeModal">キャンセル</v-btn>
+          <v-btn @click="$emit('inputPasswordEvent', password)">決定</v-btn>
         </v-row>
       </v-container>
     </v-card>

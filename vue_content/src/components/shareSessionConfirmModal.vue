@@ -15,16 +15,6 @@
             v-model="password"
             :enablePassword="enablePassword"
           ></passwordTextField>
-          <!-- <v-text-field
-            v-model="password"
-            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-            :rules="[rules.required, rules.min8]"
-            :type="show ? 'text' : 'password'"
-            label="パスワード"
-            @click:append="show = !show"
-            :disabled="!enablePassword"
-          >
-          </v-text-field> -->
         </v-row>
         <v-row justify="center">
           <v-btn @click="cancelSharing">

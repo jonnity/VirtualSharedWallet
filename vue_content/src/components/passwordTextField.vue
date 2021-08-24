@@ -21,8 +21,7 @@ export default {
     return {
       show: false,
       rules: {
-        required: (value) =>
-          !!value || "パスワードを設定する場合は入力してください",
+        required: (value) => !!value || "パスワードを入力してください",
         min8: (v) => v.length >= 8 || "8文字以上の文字列を入力してください",
       },
     };

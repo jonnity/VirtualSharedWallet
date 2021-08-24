@@ -157,7 +157,6 @@ router.post("/getUserInfo", async function (req, res) {
       sessionName,
       password
     );
-    console.log("passwordMatched: " + passwordMatched);
     if (!passwordMatched) {
       res.send({ result: constants.wrongPassword });
       return;
