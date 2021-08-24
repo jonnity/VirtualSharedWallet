@@ -22,7 +22,9 @@ function clientConnect() {
   }
 }
 
-async function passwordAuthentication(client, sessionName, password) {
+async function passwordAuthentication(client, sessionName, cipheredPassword) {
+  const myCipher = require("./myCipher");
+  const password = myCipher.myDecrypt(cipheredPassword);
   const queryPassAuth = {
     text: "SELECT (pass_hash = crypt($2, pass_hash)) AS matched FROM session_master WHERE session_name = $1",
     values: [sessionName, password],
@@ -170,6 +172,7 @@ router.post("/getUserInfo", async function (req, res) {
           paymentList.push(result.rows[un].user_payment);
         }
         res.send({
+          result: constants.success,
           userNameList: userNameList,
           paymentList: paymentList,
         });

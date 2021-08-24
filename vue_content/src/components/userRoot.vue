@@ -65,6 +65,7 @@ import axios from "axios";
 import userInfo from "./userInfo.vue";
 import appBar from "./appBar.vue";
 import shareLinkModal from "./shareLinkModal.vue";
+import passwordModal from "./passwordModal.vue";
 
 import constants from "./../constants";
 
@@ -76,6 +77,7 @@ export default {
     userInfo,
     appBar,
     shareLinkModal,
+    passwordModal,
   },
   data() {
     return {
