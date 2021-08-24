@@ -22,6 +22,28 @@ function clientConnect() {
   }
 }
 
+async function passwordAuthentication(client, sessionName, password) {
+  const queryPassAuth = {
+    text: "SELECT (pass_hash = crypt($2, pass_hash)) AS matched FROM session_master WHERE session_name = $1",
+    values: [sessionName, password],
+  };
+  try {
+    let matched = false;
+    await client
+      .query(queryPassAuth)
+      .then(function (result) {
+        console.log("result.rows[0].matched: " + result.rows[0].matched);
+        matched = result.rows[0].matched;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    return matched;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 function checkSessionNameDuplicate(client, sessionName) {
   const queryCheckSessionName = {
     text: "SELECT session_name FROM session_master WHERE session_name=$1",
@@ -83,14 +105,18 @@ function updateUpdateTime(client, sessionName) {
     text: "UPDATE session_master SET update_time = now() WHERE session_name = $1",
     values: [sessionName],
   };
-  client
-    .query(queryUpdateTime)
-    .then(function (result) {
-      console.log(result);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  try {
+    client
+      .query(queryUpdateTime)
+      .then(function (result) {
+        console.log(result);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 router.post("/checkSessionName", function (req, res) {
@@ -118,10 +144,22 @@ router.post("/checkSessionName", function (req, res) {
   }
 });
 
-router.post("/getUserInfo", function (req, res) {
+router.post("/getUserInfo", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
+    const password = req.body.encryptedPassword;
+
+    const passwordMatched = await passwordAuthentication(
+      client,
+      sessionName,
+      password
+    );
+    console.log("passwordMatched: " + passwordMatched);
+    if (!passwordMatched) {
+      res.send({ result: constants.wrongPassword });
+      return;
+    }
 
     let userNameList = [];
     let paymentList = [];
@@ -293,7 +331,7 @@ router.post("/checkExistPassword", function (req, res) {
   }
 });
 
-router.post("/encryptPasswprd", function (req, res) {
+router.post("/encryptPassword", function (req, res) {
   const myCipher = require("./myCipher");
   const plainPassword = req.body.password;
   res.send({ encryptedPassword: myCipher.myEncrypt(plainPassword) });

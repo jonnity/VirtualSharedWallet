@@ -370,14 +370,22 @@ export default {
         headers: {
           "Content-Type": "application/json",
         },
-        data: { sessionName: sessionName },
+        data: {
+          sessionName: sessionName,
+          encryptedPassword: this.$cookies.get(constants.passwordKey),
+        },
       };
 
       let _this = this;
       axios(axiosConfigToGetUserInfo)
         .then(function(response) {
-          _this.userNameList = response.data.userNameList;
-          _this.paymentList = response.data.paymentList;
+          console.log(response.data.result);
+          if (response.data.result === constants.success) {
+            _this.userNameList = response.data.userNameList;
+            _this.paymentList = response.data.paymentList;
+          } else if (response.data.result === constants.wrongPassword) {
+            console.log("パスワードが");
+          }
         })
         .catch(function(error) {
           _this.$cookies.remove(constants.sessionNameKey);
@@ -387,32 +395,37 @@ export default {
           _this = null;
         });
     },
-    updateUserInfo: function() {
+    updateUserInfo: async function() {
       const sessionName = this.$route.query.sessionName;
       // クエリパラメータにsessionNameがあるか
       const existSessionNameQuery =
         sessionName !== undefined && sessionName !== "";
-      // cookieにsessionNameがあるか
-      // const existSessionNameCookie =
-      //   this.$cookies.isKey(constants.sessionNameKey) &&
-      //   this.$cookies.get(constants.sessionNameKey) !== "";
 
       // クエリパラメータからDB > cookieからDB > cookieの情報だけで更新
       // の優先順位
       if (existSessionNameQuery) {
         this.loadSessionName = sessionName;
-        // this.passwordModalFlag = true;
-
-        // ここの処理をパスワード認証後に呼ぶ
-        this.updataUserInfoFromDB(sessionName);
+        const existPassword = await this.checkExistPassword(
+          this.loadSessionName
+        );
+        // パスワードが設定されていて、かつ、cookieに保存されていないときに入力欄を表示
         this.$cookies.set(constants.sessionNameKey, sessionName);
+        if (!existPassword) {
+          this.saveInputedPasswordToCookie("");
+          // ここの処理をパスワード認証（保存）後にも呼ぶ
+          this.updataUserInfoFromDB(sessionName);
+        } else if (this.$cookies.isKey(constants.passwordKey)) {
+          this.updataUserInfoFromDB(sessionName);
+        } else {
+          this.passwordModalFlag = true;
+        }
       } else if (this.existSessionNameCookie) {
         this.updataUserInfoFromDB(this.$cookies.get(constants.sessionNameKey));
       } else {
         this.updateUserInfoFromCookie();
       }
     },
-    checkExistPassword(sessionName) {
+    async checkExistPassword(sessionName) {
       const data = {
         sessionName: sessionName,
       };
@@ -425,23 +438,21 @@ export default {
         },
         data: data,
       };
-      let _this = this;
-      axios(axiosConfig)
+      let existPassword = true;
+      // let _this = this;
+      await axios(axiosConfig)
         .then(function(response) {
-          if (response.result === constants.success) {
-            if (response.existPassword) {
-              _this.passwordModalFlag = true;
-            } else {
-              _this.saveInputedPasswordToCookie("");
-            }
+          if (response.data.result === constants.success) {
+            existPassword = response.data.existPassword;
           }
         })
         .catch(function(error) {
           console.log(error);
-        })
-        .finally(function() {
-          _this = null;
         });
+      // .finally(function() {
+      //   _this = null;
+      // });
+      return existPassword;
     },
     saveInputedPasswordToCookie(password) {
       const axiosConfigSaveEncryptedPassword = {
@@ -460,6 +471,7 @@ export default {
             constants.passwordKey,
             response.data.encryptedPassword
           );
+          _this.updataUserInfoFromDB;
         })
         .catch(function(error) {
           console.log(error);
