@@ -1,0 +1,42 @@
+@startuml updateUserInfo@mounted
+(*)-->"mounted"
+if "クエリパラメータにsessionNameがある" then
+  -->[true] "sessionNameをcookieに保存"
+  -->"cookieの情報でDBアクセス"
+else
+  if "cookieにsessionNameがある" then 
+      -->[true] "cookieの情報でDBアクセス"
+  else
+      -->[false] "cookieからユーザー情報の更新"
+      -->"DBアクセス無しで終了"
+  endif
+endif
+
+' "cookieの情報でDBアクセス"-->"cookieの情報でDBアクセス"
+"cookieの情報でDBアクセス"-->if "sessionにパスワードが設定されてる" then
+  if "cookieにパスワードが保存されている" then
+    -->[true] "DBからユーザー情報の更新"
+  else
+    -->[false] "パスワード要求のモーダルを立ち上げる"
+    -->"入力されたパスワードをcookieに保存する"
+    -->"リロード"
+  endif
+else
+    -->[false] "空文字列をパスワードとして保存する"
+    -->"DBからユーザー情報の更新" 
+    note right: cookieのパスワードを使う（他のDBアクセスでも）
+endif
+
+partition パスワードチェック処理 {
+  "DBからユーザー情報の更新"-->if "パスワードが正しい" then 
+  
+    -->[true] "ローカルの情報を更新"
+    -->"終了"
+  else
+    -->[false] "cookieのパスワード情報を削除"
+    -->"リロード"
+  endif
+}
+-->(*)
+
+@enduml
