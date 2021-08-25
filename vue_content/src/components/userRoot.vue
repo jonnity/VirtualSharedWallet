@@ -392,6 +392,7 @@ export default {
           } else if (response.data.result === constants.wrongPassword) {
             _this.$cookies.remove(constants.passwordKey);
             alert("パスワードが違います．");
+            _this.updateUserInfo();
           }
         })
         .catch(function(error) {
