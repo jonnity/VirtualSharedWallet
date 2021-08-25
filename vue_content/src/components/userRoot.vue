@@ -124,17 +124,26 @@ export default {
         this.$cookies.get(constants.sessionNameKey) !== ""
       );
     },
+    existPasswordCookie() {
+      return (
+        this.$cookies.isKey(constants.passwordKey) &&
+        this.$cookies.get(constants.passwordKey) !== ""
+      );
+    },
   },
   methods: {
     appendUser: function(appendedUserName) {
       // ローカルの処理
       this.userNameList.push(appendedUserName);
       this.paymentList.push(0);
+
       // sessionNameがあったらDBアクセスしてその状態に上書き
-      if (this.existSessionNameCookie) {
+      if (this.existSessionNameCookie && this.existPasswordCookie) {
         const sessionName = this.$cookies.get(constants.sessionNameKey);
+        const encryptedPassword = this.$cookies.get(constants.passwordKey);
         const data = {
           sessionName: sessionName,
+          encryptedPassword: encryptedPassword,
           userName: appendedUserName,
         };
         const axiosConfigAppendUser = {
@@ -150,8 +159,12 @@ export default {
         let _this = this;
         axios(axiosConfigAppendUser)
           .then(function(response) {
-            if (response === constants.success) {
+            console.log(response);
+            if (response.result === constants.success) {
               _this.updataUserInfoFromDB(sessionName);
+            } else if (response.result === constants.wrongPassword) {
+              alert(constants.wrongPasswordMessage);
+              _this.updateUserInfo();
             }
           })
           .catch(function(error) {

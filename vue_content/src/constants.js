@@ -6,5 +6,8 @@ module.exports = {
   passwordKey: "password",
   wrongPassword: "wp",
 
+  wrongPasswordMessage:
+    "パスワードが違います．再度セッションを読み込んでください",
+
   appURL: "http://localhost:8080",
 };

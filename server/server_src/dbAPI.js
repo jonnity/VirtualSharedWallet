@@ -220,12 +220,23 @@ router.post("/resisterSession", function (req, res) {
   }
 });
 
-router.post("/appendUser", function (req, res) {
+router.post("/appendUser", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
+    const encryptedPassword = req.body.encryptedPassword;
     const userName = req.body.userName;
-    resisterUserInfo(client, sessionName, userName, 0)
+
+    const passwordMatched = await passwordAuthentication(
+      client,
+      sessionName,
+      encryptedPassword
+    );
+    if (!passwordMatched) {
+      res.send({ result: constants.wrongPassword });
+      return;
+    }
+    resisterUserInfo(client, sessionName, password, userName, 0)
       .then(function (result) {
         console.log(result);
         updateUpdateTime(client, sessionName);
