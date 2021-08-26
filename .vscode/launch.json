@@ -10,6 +10,13 @@
       "request": "launch",
       "type": "node-terminal",
       "cwd": "${workspaceFolder}\\vue_content"
+    },
+    {
+      "command": "npm start",
+      "name": "run server",
+      "request": "launch",
+      "type": "node-terminal",
+      "cwd": "${workspaceFolder}\\server"
     }
   ]
 }
