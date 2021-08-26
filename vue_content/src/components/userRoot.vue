@@ -160,7 +160,7 @@ export default {
           .then(function(response) {
             console.log(response);
             if (response.result === constants.success) {
-              _this.updataUserInfoFromDB(sessionName);
+              _this.updateUserInfoFromDB(sessionName);
             } else if (response.data.result === constants.wrongPassword) {
               _this.wrongPasswordProcess();
             }
@@ -209,7 +209,7 @@ export default {
         axios(axiosConfigUpdatePayment)
           .then(function(response) {
             if (response === constants.success) {
-              _this.updataUserInfoFromDB(sessionName);
+              _this.updateUserInfoFromDB(sessionName);
             } else if (response.data.result === constants.wrongPassword) {
               _this.wrongPasswordProcess();
             }
@@ -266,7 +266,7 @@ export default {
         axios(axiosConfigRepayment)
           .then(function(response) {
             if (response === constants.success) {
-              _this.updataUserInfoFromDB(sessionName);
+              _this.updateUserInfoFromDB(sessionName);
             } else if (response.data.result === constants.wrongPassword) {
               _this.wrongPasswordProcess();
             }
@@ -312,7 +312,7 @@ export default {
         axios(axiosConfigDeleteUser)
           .then(function(response) {
             if (response === constants.success) {
-              _this.updataUserInfoFromDB(sessionName);
+              _this.updateUserInfoFromDB(sessionName);
             } else if (response.data.result === constants.wrongPassword) {
               _this.wrongPasswordProcess();
             }
@@ -403,7 +403,7 @@ export default {
       this.$cookies.remove(constants.passwordKey);
       this.updateUserInfo();
     },
-    updataUserInfoFromDB: function(sessionName) {
+    updateUserInfoFromDB: function(sessionName) {
       // passwordがcookieになかったら，パスワード要求して終わり
       // いらない？全体のフロー見ないとわかんない
       // たぶんいらんけど念の為
@@ -421,6 +421,46 @@ export default {
         data: {
           sessionName: sessionName,
           encryptedPassword: this.$cookies.get(constants.passwordKey),
+        },
+      };
+
+      let _this = this;
+      axios(axiosConfigToGetUserInfo)
+        .then(function(response) {
+          console.log(response.data.result);
+          if (response.data.result === constants.success) {
+            _this.userNameList = response.data.userNameList;
+            _this.paymentList = response.data.paymentList;
+          } else if (response.data.result === constants.wrongPassword) {
+            _this.wrongPasswordProcess();
+          }
+        })
+        .catch(function(error) {
+          _this.$cookies.remove(constants.sessionNameKey);
+          console.log(error);
+        })
+        .finally(function() {
+          _this = null;
+        });
+    },
+    async updateUserInfoFromDBWithoutPassword(sessionName) {
+      if (!this.$cookies.isKey(constants.passwordKey)) {
+        this.passwordModalFlag = true;
+        return;
+      }
+      const encryptedThroughPassword = await this.encrypt(
+        constants.throughPassword
+      );
+      const axiosConfigToGetUserInfo = {
+        method: "post",
+        url: "dbAPI/getUserInfo",
+        responseType: "json",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          sessionName: sessionName,
+          encryptedPassword: encryptedThroughPassword,
         },
       };
 
@@ -467,12 +507,12 @@ export default {
       const existPassword = await this.checkExistPassword(this.loadSessionName);
       // パスワードが設定されていて、かつ、cookieに保存されていないときに入力欄を表示
       if (!existPassword) {
-        await this.saveEncryptedPasswordToCookieAndUpdate(
-          constants.throughPassword
-        );
-        this.updataUserInfoFromDB(this.loadSessionName);
+        // await this.saveEncryptedPasswordToCookieAndUpdate(
+        //   constants.throughPassword
+        // );
+        this.updateUserInfoFromDBWithoutPassword(this.loadSessionName);
       } else if (this.$cookies.isKey(constants.passwordKey)) {
-        this.updataUserInfoFromDB(this.loadSessionName);
+        this.updateUserInfoFromDB(this.loadSessionName);
       } else {
         // passwordをcookieに保存してここに戻ってくる
         // modalのイベント発火でsaveEncryptedPasswordToCookieAndUpdateが呼ばれて
@@ -536,7 +576,28 @@ export default {
           _this = null;
         });
     },
-    // inputedPassword(password) {},
+    async encrypt(plainText) {
+      let encryptedText = "";
+      const axiosConfigEncrypt = {
+        method: "post",
+        url: "dbAPI/encryptPassword",
+        responseType: "json",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: { password: plainText },
+      };
+      await axios(axiosConfigEncrypt)
+        .then(function(response) {
+          if (response.result === constants.success) {
+            encryptedText = response.encryptedText;
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+      return encryptedText;
+    },
   },
   updated: function() {
     this.$nextTick(function() {
