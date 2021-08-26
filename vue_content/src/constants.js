@@ -4,6 +4,8 @@ module.exports = {
   error: "error",
   sessionNameKey: "sessionName",
   passwordKey: "password",
+  userNameListKey: "userNameList",
+  paymentListKey: "paymentList",
   wrongPassword: "wp",
 
   wrongPasswordMessage:

@@ -224,8 +224,8 @@ router.post("/appendUser", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
-    const encryptedPassword = req.body.encryptedPassword;
     const userName = req.body.userName;
+    const encryptedPassword = req.body.encryptedPassword;
 
     const passwordMatched = await passwordAuthentication(
       client,
@@ -236,7 +236,7 @@ router.post("/appendUser", async function (req, res) {
       res.send({ result: constants.wrongPassword });
       return;
     }
-    resisterUserInfo(client, sessionName, password, userName, 0)
+    resisterUserInfo(client, sessionName, userName, 0)
       .then(function (result) {
         console.log(result);
         updateUpdateTime(client, sessionName);
@@ -251,11 +251,23 @@ router.post("/appendUser", async function (req, res) {
   }
 });
 
-router.post("/deleteUser", function (req, res) {
+router.post("/deleteUser", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
     const userName = req.body.userName;
+    const encryptedPassword = req.body.encryptedPassword;
+
+    const passwordMatched = await passwordAuthentication(
+      client,
+      sessionName,
+      encryptedPassword
+    );
+    if (!passwordMatched) {
+      res.send({ result: constants.wrongPassword });
+      return;
+    }
+
     deleteUser(client, sessionName, userName)
       .then(function (result) {
         console.log(result);
@@ -271,12 +283,24 @@ router.post("/deleteUser", function (req, res) {
   }
 });
 
-router.post("/updatePayment", function (req, res) {
+router.post("/updatePayment", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
     const userName = req.body.userName;
     const paymentAmount = req.body.paymentAmount;
+    const encryptedPassword = req.body.encryptedPassword;
+
+    const passwordMatched = await passwordAuthentication(
+      client,
+      sessionName,
+      encryptedPassword
+    );
+    if (!passwordMatched) {
+      res.send({ result: constants.wrongPassword });
+      return;
+    }
+
     updatePayment(client, sessionName, userName, paymentAmount)
       .then(function (result) {
         console.log(result);
@@ -292,13 +316,25 @@ router.post("/updatePayment", function (req, res) {
   }
 });
 
-router.post("/repayment", function (req, res) {
+router.post("/repayment", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
     const payerName = req.body.payer;
     const receiverName = req.body.receiver;
     const paymentAmount = req.body.paymentAmount;
+    const encryptedPassword = req.body.encryptedPassword;
+
+    const passwordMatched = await passwordAuthentication(
+      client,
+      sessionName,
+      encryptedPassword
+    );
+    if (!passwordMatched) {
+      res.send({ result: constants.wrongPassword });
+      return;
+    }
+
     updatePayment(client, sessionName, payerName, paymentAmount)
       .then(function (result) {
         updatePayment(client, sessionName, receiverName, -paymentAmount)

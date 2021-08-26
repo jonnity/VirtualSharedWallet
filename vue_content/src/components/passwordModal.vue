@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import constants from "../constants";
 import passwordTextField from "./passwordTextField.vue";
 
 export default {
@@ -44,6 +45,7 @@ export default {
   props: ["sessionName"],
   methods: {
     closeModal() {
+      this.$cookies.remove(constants.sessionNameKey);
       this.$emit("closeModal");
     },
   },

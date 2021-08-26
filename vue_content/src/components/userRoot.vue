@@ -59,7 +59,6 @@
 
 <script>
 import Vue from "vue";
-import VueCookies from "vue-cookies";
 import axios from "axios";
 
 import userInfo from "./userInfo.vue";
@@ -68,8 +67,6 @@ import shareLinkModal from "./shareLinkModal.vue";
 import passwordModal from "./passwordModal.vue";
 
 import constants from "./../constants";
-
-Vue.use(VueCookies);
 
 export default {
   name: "userRoot",
@@ -137,8 +134,10 @@ export default {
       this.userNameList.push(appendedUserName);
       this.paymentList.push(0);
 
-      // sessionNameがあったらDBアクセスしてその状態に上書き
-      if (this.existSessionNameCookie && this.existPasswordCookie) {
+      // session情報がなければローカルの処理のみで終了
+      if (!(this.existSessionNameCookie && this.existPasswordCookie)) {
+        return;
+      } else {
         const sessionName = this.$cookies.get(constants.sessionNameKey);
         const encryptedPassword = this.$cookies.get(constants.passwordKey);
         const data = {
@@ -162,9 +161,8 @@ export default {
             console.log(response);
             if (response.result === constants.success) {
               _this.updataUserInfoFromDB(sessionName);
-            } else if (response.result === constants.wrongPassword) {
-              alert(constants.wrongPasswordMessage);
-              _this.updateUserInfo();
+            } else if (response.data.result === constants.wrongPassword) {
+              _this.wrongPasswordProcess();
             }
           })
           .catch(function(error) {
@@ -174,8 +172,6 @@ export default {
           .finally(function() {
             _this = null;
           });
-      } else {
-        this.updateUserInfo();
       }
     },
     calcTotalPayment: function(paymentInfo) {
@@ -187,11 +183,15 @@ export default {
         paymentUserIndex,
         this.paymentList[paymentUserIndex] + paymentInfo.amount
       );
-      if (this.existSessionNameCookie) {
+      if (!(this.existSessionNameCookie && this.existPasswordCookie)) {
+        return;
+      } else {
         const sessionName = this.$cookies.get(constants.sessionNameKey);
+        const encryptedPassword = this.$cookies.get(constants.passwordKey);
 
         const data = {
           sessionName: sessionName,
+          encryptedPassword: encryptedPassword,
           userName: paymentInfo.name,
           paymentAmount: paymentInfo.amount,
         };
@@ -210,6 +210,8 @@ export default {
           .then(function(response) {
             if (response === constants.success) {
               _this.updataUserInfoFromDB(sessionName);
+            } else if (response.data.result === constants.wrongPassword) {
+              _this.wrongPasswordProcess();
             }
           })
           .catch(function(error) {
@@ -237,16 +239,20 @@ export default {
         this.paymentList[receiverIndex] - repaymentInfo.amount
       );
       // DB処理
-      if (this.existSessionNameCookie) {
+      if (!(this.existSessionNameCookie && this.existPasswordCookie)) {
+        return;
+      } else {
         const sessionName = this.$cookies.get(constants.sessionNameKey);
+        const encryptedPassword = this.$cookies.get(constants.passwordKey);
 
         const data = {
           sessionName: sessionName,
+          encryptedPassword: encryptedPassword,
           payer: repaymentInfo.payer,
           receiver: repaymentInfo.receiver,
           paymentAmount: repaymentInfo.amount,
         };
-        const axiosConfigUpdatePayment = {
+        const axiosConfigRepayment = {
           method: "post",
           url: "dbAPI/repayment",
           responseType: "json",
@@ -257,10 +263,12 @@ export default {
         };
 
         let _this = this;
-        axios(axiosConfigUpdatePayment)
+        axios(axiosConfigRepayment)
           .then(function(response) {
             if (response === constants.success) {
               _this.updataUserInfoFromDB(sessionName);
+            } else if (response.data.result === constants.wrongPassword) {
+              _this.wrongPasswordProcess();
             }
           })
           .catch(function(error) {
@@ -279,10 +287,15 @@ export default {
       this.userNameList.splice(userIndex, 1);
       this.paymentList.splice(userIndex, 1);
 
-      if (this.existSessionNameCookie) {
+      if (!(this.existSessionNameCookie && this.existPasswordCookie)) {
+        return;
+      } else {
         const sessionName = this.$cookies.get(constants.sessionNameKey);
+        const encryptedPassword = this.$cookies.get(constants.passwordKey);
+
         const data = {
           sessionName: sessionName,
+          encryptedPassword: encryptedPassword,
           userName: userName,
         };
         const axiosConfigDeleteUser = {
@@ -300,6 +313,8 @@ export default {
           .then(function(response) {
             if (response === constants.success) {
               _this.updataUserInfoFromDB(sessionName);
+            } else if (response.data.result === constants.wrongPassword) {
+              _this.wrongPasswordProcess();
             }
           })
           .catch(function(error) {
@@ -338,6 +353,7 @@ export default {
               constants.sessionNameKey,
               sessionInfo.sessionName
             );
+            _this.saveEncryptedPasswordToCookieAndUpdate(sessionInfo.password);
           }
         })
         .catch(function(error) {
@@ -348,25 +364,28 @@ export default {
         });
     },
     loadUserInfo: function(sessionName) {
+      this.$cookies.remove(constants.passwordKey);
       window.location.href = constants.appURL + "?sessionName=" + sessionName;
     },
     updateUserInfoFromCookie: function() {
       // どちらかのキーがなかったら中止
       if (
-        !this.$cookies.isKey("userNameList") ||
-        !this.$cookies.isKey("paymentList")
+        !this.$cookies.isKey(constants.userNameListKey) ||
+        !this.$cookies.isKey(constants.paymentListKey)
       ) {
         this.userNameList = [];
         this.paymentList = [];
         return;
       }
-      let tempUserNameListCookie = this.$cookies.get("userNameList");
-      let tempPaymentListCookie = this.$cookies.get("paymentList");
+      let tempUserNameListCookie = this.$cookies.get(constants.userNameListKey);
+      let tempPaymentListCookie = this.$cookies.get(constants.paymentListKey);
 
       if (tempUserNameListCookie === null || tempPaymentListCookie === null) {
-        alert("データが破損しています。");
         this.userNameList = [];
         this.paymentList = [];
+        this.$cookies.remove(constants.userNameListKey);
+        this.$cookies.remove(constants.paymentListKey);
+        // alert("データが破損しています。");
         return;
       }
       this.userNameList = tempUserNameListCookie.split(",");
@@ -433,6 +452,7 @@ export default {
       // どこにもsessionNameがなければローカルで処理する
       if (!existSessionNameQuery && !this.existSessionNameCookie) {
         this.updateUserInfoFromCookie();
+        this.$cookies.remove(constants.passwordKey);
         return;
       }
 
@@ -461,7 +481,7 @@ export default {
       const data = {
         sessionName: sessionName,
       };
-      const axiosConfig = {
+      const axiosConfigCheckExistPassword = {
         method: "post",
         url: "dbAPI/checkExistPassword",
         responseType: "json",
@@ -472,7 +492,7 @@ export default {
       };
       let existPassword = true;
       // let _this = this;
-      await axios(axiosConfig)
+      await axios(axiosConfigCheckExistPassword)
         .then(function(response) {
           if (response.data.result === constants.success) {
             existPassword = response.data.existPassword;
