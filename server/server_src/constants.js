@@ -6,5 +6,5 @@ module.exports = {
 
   throughPassword: "tp",
 
-  appURL: "http://localhost:8080",
+  appURL: "https://wa-warikan.herokuapp.com",
 };
