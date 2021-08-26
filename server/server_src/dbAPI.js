@@ -41,6 +41,9 @@ async function passwordAuthentication(client, sessionName, cipheredPassword) {
       })
       .catch(function (error) {
         console.log(error);
+      })
+      .finally(function () {
+        client.end();
       });
     return matched;
   } catch (e) {
@@ -117,6 +120,9 @@ function updateUpdateTime(client, sessionName) {
       })
       .catch(function (error) {
         console.log(error);
+      })
+      .finally(function () {
+        client.end();
       });
   } catch (e) {
     console.log(e);
@@ -142,6 +148,9 @@ router.post("/checkSessionName", function (req, res) {
       .catch(function (error) {
         console.log(error);
         res.status(500).send({ result: constants.error, error: error });
+      })
+      .finally(function () {
+        client.end();
       });
   } catch (e) {
     console.log(e);
@@ -181,6 +190,9 @@ router.post("/getUserInfo", async function (req, res) {
       .catch(function (error) {
         console.log(error);
         res.status(500).send({ result: constants.error, error: error });
+      })
+      .finally(function () {
+        client.end();
       });
   } catch (e) {
     console.log(e);
@@ -216,6 +228,9 @@ router.post("/resisterSession", function (req, res) {
       })
       .catch(function (error) {
         console.log(error);
+      })
+      .finally(function () {
+        client.end();
       });
   } catch (e) {
     console.log(e);
@@ -247,6 +262,9 @@ router.post("/appendUser", async function (req, res) {
       .catch(function (error) {
         console.log(error);
         res.status(500).send({ result: constants.error });
+      })
+      .finally(function () {
+        client.end();
       });
   } catch (e) {
     console.log(e);
@@ -279,6 +297,9 @@ router.post("/deleteUser", async function (req, res) {
       .catch(function (error) {
         console.log(error);
         res.status(500).send({ result: constants.error });
+      })
+      .finally(function () {
+        client.end();
       });
   } catch (e) {
     console.log(e);
@@ -312,6 +333,9 @@ router.post("/updatePayment", async function (req, res) {
       .catch(function (error) {
         console.log(error);
         res.status(500).send({ result: constants.error });
+      })
+      .finally(function () {
+        client.end();
       });
   } catch (e) {
     console.log(e);
@@ -354,6 +378,9 @@ router.post("/repayment", async function (req, res) {
       .catch(function (error) {
         console.log(error);
         res.status(500).send({ result: constants.error });
+      })
+      .finally(function () {
+        client.end();
       });
   } catch (e) {
     console.log(e);
@@ -376,6 +403,9 @@ router.post("/checkExistPassword", function (req, res) {
       .catch(function (error) {
         console.log(error);
         res.status(500).send({ result: constants.error });
+      })
+      .finally(function () {
+        client.end();
       });
   } catch (e) {
     console.log(e);
