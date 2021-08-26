@@ -1,5 +1,10 @@
 <template>
   <div>
+    <shareSessionConfirmModal
+      v-if="shareFlag"
+      @shareConfirmEvent="emitShareEvent"
+      @shareCancelEvent="shareFlag = false"
+    ></shareSessionConfirmModal>
     <loadSessionConfirmModal
       v-if="loadFlag"
       @loadConfirmEvent="emitLoadEvent"
@@ -24,6 +29,7 @@
 
 <script>
 import sessionNameTextField from "./../components/sessionNameTextField.vue";
+import shareSessionConfirmModal from "./../components/shareSessionConfirmModal.vue";
 import loadSessionConfirmModal from "./../components/loadSessionConfirmModal.vue";
 
 import constants from "./../constants";
@@ -31,13 +37,18 @@ import axios from "axios";
 
 export default {
   name: "shareAndLoadForm",
-  components: { sessionNameTextField, loadSessionConfirmModal },
+  components: {
+    sessionNameTextField,
+    shareSessionConfirmModal,
+    loadSessionConfirmModal,
+  },
   props: [""],
   data: function() {
     return {
       sessionName: "",
       errorMessage: "",
       isError: false,
+      shareFlag: false,
       loadFlag: false,
     };
   },
@@ -63,7 +74,8 @@ export default {
             _this.isError = true;
           } else {
             _this.isError = false;
-            _this.$emit("shareEvent", _this.sessionName);
+            // _this.$emit("shareEvent", _this.sessionName);
+            _this.shareFlag = true;
           }
         })
         .catch(function(error) {
@@ -103,8 +115,16 @@ export default {
           _this = null;
         });
     },
+    emitShareEvent(password) {
+      this.$emit("shareEvent", {
+        password: password,
+        sessionName: this.sessionName,
+      });
+      this.shareFlag = false;
+    },
     emitLoadEvent() {
       this.$emit("loadEvent", this.sessionName);
+      this.loadFlag = false;
     },
   },
 };

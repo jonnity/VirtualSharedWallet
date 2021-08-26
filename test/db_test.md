@@ -47,3 +47,7 @@ insert into users
   (session_name, user_name, user_payment)
   values ('test_session', 'ワワーリ・カーン', '10000');
 ```
+
+```
+SELECT (pass_hash = crypt('testPass', pass_hash)) AS matched FROM session_master WHERE session_name = 'tessPass';
+```

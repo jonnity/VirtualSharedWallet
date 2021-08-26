@@ -82,8 +82,8 @@ export default {
     repaymentEvent(repaymentInfo) {
       this.$emit("repaymentEvent", repaymentInfo);
     },
-    shareEvent(sessionName) {
-      this.$emit("shareEvent", sessionName);
+    shareEvent(sessionInfo) {
+      this.$emit("shareEvent", sessionInfo);
     },
     loadEvent(sessionName) {
       this.$emit("loadEvent", sessionName);

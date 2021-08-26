@@ -1,7 +1,5 @@
 require("dotenv").config();
 
-const { query } = require("express");
-const e = require("express");
 const express = require("express");
 const router = express.Router();
 const { Client } = require("pg");
@@ -19,6 +17,30 @@ function clientConnect() {
     const client = new Client(postgreInfo);
     client.connect();
     return client;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function passwordAuthentication(client, sessionName, cipheredPassword) {
+  const myCipher = require("./myCipher");
+  const password = myCipher.myDecrypt(cipheredPassword);
+  const queryPassAuth = {
+    text: "SELECT (pass_hash = crypt($2, pass_hash)) AS matched FROM session_master WHERE session_name = $1",
+    values: [sessionName, password],
+  };
+  try {
+    let matched = false;
+    await client
+      .query(queryPassAuth)
+      .then(function (result) {
+        console.log("result.rows[0].matched: " + result.rows[0].matched);
+        matched = result.rows[0].matched;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    return matched;
   } catch (e) {
     console.log(e);
   }
@@ -42,7 +64,7 @@ function getUserInfo(client, sessionName) {
 
 function resisterSession(client, sessionName, password) {
   const queryResisterSession = {
-    text: "INSERT INTO session_master(session_name, pass_hash, create_time, update_time) VALUES($1, crypt('$2', gen_salt('bf')), now(), now())",
+    text: "INSERT INTO session_master(session_name, pass_hash, create_time, update_time) VALUES($1, crypt($2, gen_salt('bf')), now(), now())",
     values: [sessionName, password],
   };
   return client.query(queryResisterSession);
@@ -72,19 +94,31 @@ function updatePayment(client, sessionName, userName, paymentAmount) {
   return client.query(queryRepayment);
 }
 
+function checkExistPassword(client, sessionName) {
+  const queryCheckExistPassword = {
+    text: "SELECT (pass_hash = crypt($2, pass_hash)) AS matched FROM session_master WHERE session_name = $1",
+    values: [sessionName, ""],
+  };
+  return client.query(queryCheckExistPassword);
+}
+
 function updateUpdateTime(client, sessionName) {
   const queryUpdateTime = {
     text: "UPDATE session_master SET update_time = now() WHERE session_name = $1",
     values: [sessionName],
   };
-  client
-    .query(queryUpdateTime)
-    .then(function (result) {
-      console.log(result);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  try {
+    client
+      .query(queryUpdateTime)
+      .then(function (result) {
+        console.log(result);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 router.post("/checkSessionName", function (req, res) {
@@ -112,10 +146,21 @@ router.post("/checkSessionName", function (req, res) {
   }
 });
 
-router.post("/getUserInfo", function (req, res) {
+router.post("/getUserInfo", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
+    const password = req.body.encryptedPassword;
+
+    const passwordMatched = await passwordAuthentication(
+      client,
+      sessionName,
+      password
+    );
+    if (!passwordMatched) {
+      res.send({ result: constants.wrongPassword });
+      return;
+    }
 
     let userNameList = [];
     let paymentList = [];
@@ -126,6 +171,7 @@ router.post("/getUserInfo", function (req, res) {
           paymentList.push(result.rows[un].user_payment);
         }
         res.send({
+          result: constants.success,
           userNameList: userNameList,
           paymentList: paymentList,
         });
@@ -143,10 +189,11 @@ router.post("/resisterSession", function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
+    const password = req.body.password;
     const userNameList = req.body.userNameList;
     const paymentList = req.body.paymentList;
 
-    resisterSession(client, sessionName, "")
+    resisterSession(client, sessionName, password)
       .then(function (result) {
         console.log(result);
         for (let un = 0; un < userNameList.length; un++) {
@@ -173,11 +220,22 @@ router.post("/resisterSession", function (req, res) {
   }
 });
 
-router.post("/appendUser", function (req, res) {
+router.post("/appendUser", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
     const userName = req.body.userName;
+    const encryptedPassword = req.body.encryptedPassword;
+
+    const passwordMatched = await passwordAuthentication(
+      client,
+      sessionName,
+      encryptedPassword
+    );
+    if (!passwordMatched) {
+      res.send({ result: constants.wrongPassword });
+      return;
+    }
     resisterUserInfo(client, sessionName, userName, 0)
       .then(function (result) {
         console.log(result);
@@ -193,11 +251,23 @@ router.post("/appendUser", function (req, res) {
   }
 });
 
-router.post("/deleteUser", function (req, res) {
+router.post("/deleteUser", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
     const userName = req.body.userName;
+    const encryptedPassword = req.body.encryptedPassword;
+
+    const passwordMatched = await passwordAuthentication(
+      client,
+      sessionName,
+      encryptedPassword
+    );
+    if (!passwordMatched) {
+      res.send({ result: constants.wrongPassword });
+      return;
+    }
+
     deleteUser(client, sessionName, userName)
       .then(function (result) {
         console.log(result);
@@ -213,12 +283,24 @@ router.post("/deleteUser", function (req, res) {
   }
 });
 
-router.post("/updatePayment", function (req, res) {
+router.post("/updatePayment", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
     const userName = req.body.userName;
     const paymentAmount = req.body.paymentAmount;
+    const encryptedPassword = req.body.encryptedPassword;
+
+    const passwordMatched = await passwordAuthentication(
+      client,
+      sessionName,
+      encryptedPassword
+    );
+    if (!passwordMatched) {
+      res.send({ result: constants.wrongPassword });
+      return;
+    }
+
     updatePayment(client, sessionName, userName, paymentAmount)
       .then(function (result) {
         console.log(result);
@@ -234,13 +316,25 @@ router.post("/updatePayment", function (req, res) {
   }
 });
 
-router.post("/repayment", function (req, res) {
+router.post("/repayment", async function (req, res) {
   const client = clientConnect();
   try {
     const sessionName = req.body.sessionName;
     const payerName = req.body.payer;
     const receiverName = req.body.receiver;
     const paymentAmount = req.body.paymentAmount;
+    const encryptedPassword = req.body.encryptedPassword;
+
+    const passwordMatched = await passwordAuthentication(
+      client,
+      sessionName,
+      encryptedPassword
+    );
+    if (!passwordMatched) {
+      res.send({ result: constants.wrongPassword });
+      return;
+    }
+
     updatePayment(client, sessionName, payerName, paymentAmount)
       .then(function (result) {
         updatePayment(client, sessionName, receiverName, -paymentAmount)
@@ -262,6 +356,34 @@ router.post("/repayment", function (req, res) {
   } catch (e) {
     console.log(e);
   }
+});
+
+router.post("/checkExistPassword", function (req, res) {
+  const client = clientConnect();
+  try {
+    const sessionName = req.body.sessionName;
+    checkExistPassword(client, sessionName)
+      .then(function (result) {
+        console.log(result);
+        const existPassword = !result.rows[0].matched;
+        res.send({
+          result: constants.success,
+          existPassword: existPassword,
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+        res.status(500).send({ result: constants.error });
+      });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.post("/encryptPassword", function (req, res) {
+  const myCipher = require("./myCipher");
+  const plainPassword = req.body.password;
+  res.send({ encryptedPassword: myCipher.myEncrypt(plainPassword) });
 });
 
 module.exports = router;
