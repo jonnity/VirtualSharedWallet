@@ -41,10 +41,10 @@ async function passwordAuthentication(client, sessionName, cipheredPassword) {
       })
       .catch(function (error) {
         console.log(error);
-      })
-      .finally(function () {
-        client.end();
       });
+    // .finally(function () {
+    //   client.end();
+    // });
     return matched;
   } catch (e) {
     console.log(e);
