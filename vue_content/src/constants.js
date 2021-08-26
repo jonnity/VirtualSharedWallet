@@ -11,5 +11,5 @@ module.exports = {
   wrongPasswordMessage:
     "パスワードが違います．再度セッションを読み込んでください",
 
-  appURL: "http://localhost:8080",
+  appURL: "https://wa-warikan.herokuapp.com",
 };
