@@ -4,5 +4,7 @@ module.exports = {
   error: "error",
   wrongPassword: "wp",
 
+  throughPassword: "tp",
+
   appURL: "http://localhost:8080",
 };

@@ -99,7 +99,7 @@ function updatePayment(client, sessionName, userName, paymentAmount) {
 function checkExistPassword(client, sessionName) {
   const queryCheckExistPassword = {
     text: "SELECT (pass_hash = crypt($2, pass_hash)) AS matched FROM session_master WHERE session_name = $1",
-    values: [sessionName, ""],
+    values: [sessionName, constants.throughPassword],
   };
   return client.query(queryCheckExistPassword);
 }
