@@ -468,6 +468,7 @@ export default {
       // パスワードが設定されていて、かつ、cookieに保存されていないときに入力欄を表示
       if (!existPassword) {
         this.saveEncryptedPasswordToCookieAndUpdate(constants.throughPassword);
+        this.updataUserInfoFromDB(this.loadSessionName);
       } else if (this.$cookies.isKey(constants.passwordKey)) {
         this.updataUserInfoFromDB(this.loadSessionName);
       } else {
