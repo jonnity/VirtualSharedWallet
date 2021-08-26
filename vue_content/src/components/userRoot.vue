@@ -468,6 +468,7 @@ export default {
       axios(axiosConfigToGetUserInfo)
         .then(function(response) {
           console.log(response.data.result);
+          _this.$cookies.set(constants.passwordKey, encryptedThroughPassword);
           if (response.data.result === constants.success) {
             _this.userNameList = response.data.userNameList;
             _this.paymentList = response.data.paymentList;
