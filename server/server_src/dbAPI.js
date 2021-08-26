@@ -8,7 +8,7 @@ const constants = require("./constants");
 function clientConnect() {
   const postgreInfo = {
     connectionString: process.env.DATABASE_URL,
-    ssl: true,
+    ssl: { rejectUnauthorized: false },
     // user: process.env.POSTGRE_USER,
     // password: process.env.POSTGRE_PASS,
     // host: process.env.POSTGRE_HOST,
