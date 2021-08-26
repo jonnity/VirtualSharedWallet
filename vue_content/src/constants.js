@@ -8,7 +8,7 @@ module.exports = {
   paymentListKey: "paymentList",
   wrongPassword: "wp",
 
-  throughPassword: "tp",
+  throughPassword: "",
 
   wrongPasswordMessage:
     "パスワードが違います．再度セッションを読み込んでください",

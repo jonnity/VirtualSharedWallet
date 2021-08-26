@@ -4,7 +4,7 @@ module.exports = {
   error: "error",
   wrongPassword: "wp",
 
-  throughPassword: "tp",
+  throughPassword: "",
 
   appURL: "https://wa-warikan.herokuapp.com",
 };
