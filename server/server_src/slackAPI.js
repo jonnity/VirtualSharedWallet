@@ -11,7 +11,7 @@ const web = new WebClient(token);
 
 // const dbAPI = require("./dbAPI");
 
-router.post("/startSlackSession", function (req, res) {
+router.post("/startSlackSession", async function (req, res) {
   console.log(req);
   const result = await web.chat.postMessage({
     text: "Hello world!",
