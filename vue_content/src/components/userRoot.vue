@@ -407,10 +407,10 @@ export default {
       // passwordがcookieになかったら，パスワード要求して終わり
       // いらない？全体のフロー見ないとわかんない
       // たぶんいらんけど念の為
-      if (!this.$cookies.isKey(constants.passwordKey)) {
-        this.passwordModalFlag = true;
-        return;
-      }
+      // if (!this.$cookies.isKey(constants.passwordKey)) {
+      //   this.passwordModalFlag = true;
+      //   return;
+      // }
       const axiosConfigToGetUserInfo = {
         method: "post",
         url: "dbAPI/getUserInfo",
