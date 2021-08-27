@@ -365,7 +365,7 @@ router.post("/repayment", async function (req, res) {
       updatePayment(client, sessionName, payerName, paymentAmount),
       updatePayment(client, sessionName, receiverName, -paymentAmount),
     ])
-      .then(async function () {
+      .then(async function (result) {
         console.log(result);
         await updateUpdateTime(client, sessionName);
         res.send({ result: constants.success });
