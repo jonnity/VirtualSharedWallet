@@ -35,7 +35,9 @@ export default {
   methods: {
     formatNameAndEmitEvent: function() {
       let appendedUserName = this.inputtedUserName;
-      const sameNameReg = new RegExp(this.inputtedUserName + "_?[0-9]*");
+      // 入力文字列+"_"+数字 に一致する正規表現
+      const sameNameReg = new RegExp(this.inputtedUserName + "(_[0-9]*)?");
+      // sameNameRegで一致する文字列のみを残したリストを作成
       const sameNames = this.userNameList.filter(function(name) {
         return name.search(sameNameReg) != -1;
       });
