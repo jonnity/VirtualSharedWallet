@@ -254,7 +254,7 @@ router.post("/appendUser", async function (req, res) {
       return;
     }
     resisterUserInfo(client, sessionName, userName, 0)
-      .then(function (result) {
+      .then(async function (result) {
         console.log(result);
         await updateUpdateTime(client, sessionName);
         res.send({ result: constants.success });
@@ -289,7 +289,7 @@ router.post("/deleteUser", async function (req, res) {
     }
 
     deleteUser(client, sessionName, userName)
-      .then(function (result) {
+      .then(async function (result) {
         console.log(result);
         await updateUpdateTime(client, sessionName);
         res.send({ result: constants.success });
@@ -325,7 +325,7 @@ router.post("/updatePayment", async function (req, res) {
     }
 
     updatePayment(client, sessionName, userName, paymentAmount)
-      .then(function (result) {
+      .then(async function (result) {
         console.log(result);
         await updateUpdateTime(client, sessionName);
         res.send({ result: constants.success });
@@ -364,7 +364,7 @@ router.post("/repayment", async function (req, res) {
     updatePayment(client, sessionName, payerName, paymentAmount)
       .then(function (result) {
         updatePayment(client, sessionName, receiverName, -paymentAmount)
-          .then(function (result) {
+          .then(async function (result) {
             console.log(result);
             await updateUpdateTime(client, sessionName);
           })
