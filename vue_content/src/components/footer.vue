@@ -8,11 +8,11 @@
         </v-col>
         <!-- <v-spacer></v-spacer> -->
         <v-col cols="4" class="footer_centering">
-          <v-btn v-for="icon in icons" :key="icon" class="mx-1" icon dark>
+          <!-- <v-btn v-for="icon in icons" :key="icon" class="mx-1" icon dark>
             <v-icon size="24px">
               {{ icon }}
             </v-icon>
-          </v-btn>
+          </v-btn> -->
         </v-col>
       </v-row>
     </v-container>
