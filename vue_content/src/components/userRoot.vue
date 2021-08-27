@@ -444,10 +444,8 @@ export default {
         });
     },
     async updateUserInfoFromDBWithoutPassword(sessionName) {
-      if (!this.$cookies.isKey(constants.passwordKey)) {
-        this.passwordModalFlag = true;
-        return;
-      }
+      this.passwordModalFlag = false;
+
       const encryptedThroughPassword = await this.encrypt(
         constants.throughPassword
       );
