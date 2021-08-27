@@ -361,18 +361,13 @@ router.post("/repayment", async function (req, res) {
       return;
     }
 
-    updatePayment(client, sessionName, payerName, paymentAmount)
-      .then(function (result) {
-        updatePayment(client, sessionName, receiverName, -paymentAmount)
-          .then(async function (result) {
-            console.log(result);
-            await updateUpdateTime(client, sessionName);
-          })
-          .catch(function (error) {
-            console.log(error);
-            res.status(500).send({ result: constants.error });
-          });
+    Promise.all([
+      updatePayment(client, sessionName, payerName, paymentAmount),
+      updatePayment(client, sessionName, receiverName, -paymentAmount),
+    ])
+      .then(async function () {
         console.log(result);
+        await updateUpdateTime(client, sessionName);
         res.send({ result: constants.success });
       })
       .catch(function (error) {
@@ -382,6 +377,28 @@ router.post("/repayment", async function (req, res) {
       .finally(function () {
         client.end();
       });
+
+    // updatePayment(client, sessionName, payerName, paymentAmount)
+    //   .then(function (result) {
+    //     updatePayment(client, sessionName, receiverName, -paymentAmount)
+    //       .then(async function (result) {
+    //         console.log(result);
+    //         await updateUpdateTime(client, sessionName);
+    //       })
+    //       .catch(function (error) {
+    //         console.log(error);
+    //         res.status(500).send({ result: constants.error });
+    //       });
+    //     console.log(result);
+    //     res.send({ result: constants.success });
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //     res.status(500).send({ result: constants.error });
+    //   })
+    //   .finally(function () {
+    //     client.end();
+    //   });
   } catch (e) {
     console.log(e);
   }
