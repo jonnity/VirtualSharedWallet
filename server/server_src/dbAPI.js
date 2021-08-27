@@ -333,10 +333,10 @@ router.post("/updatePayment", async function (req, res) {
       .catch(function (error) {
         console.log(error);
         res.status(500).send({ result: constants.error });
-      })
-      .finally(function () {
-        client.end();
       });
+    // .finally(function () {
+    //   client.end();
+    // });
   } catch (e) {
     console.log(e);
   }
