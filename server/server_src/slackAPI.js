@@ -12,7 +12,10 @@ const web = new WebClient(token);
 // const dbAPI = require("./dbAPI");
 
 router.post("/startSlackSession", async function (req, res) {
-  console.log(req);
+  console.log("---------------------headers---------------------");
+  console.log(req.headers);
+  console.log("---------------------body---------------------");
+  console.log(req.body);
   // const result = await web.chat.postMessage({
   //   text: "Hello world!",
   // });
