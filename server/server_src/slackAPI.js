@@ -18,12 +18,13 @@ router.post("/startSlackSession", async function (req, res) {
   console.log(req.body);
   console.log(req.body.team_domain) + "でセッション名決めればいいか．↓とか";
   console.log("slack_" + req.body.team_domain);
+  console.log("---------------------req.body.channel_id---------------------");
+  console.log(req.body.channel_id);
   try {
     // const userList = await slackClient.users.list();
     // userNameList = storeUserNameToArray(userList.members);
     // console.log("userNameList" + userNameList);
     const channelUserNameList = await slackClient.conversations.members(
-      token,
       req.body.channel_id
     );
     console.log(channelUserNameList.members);
