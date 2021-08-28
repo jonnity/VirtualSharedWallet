@@ -28,34 +28,29 @@ router.post("/startSlackSession", async function (req, res) {
     // const channelUserNameList = await slackClient.conversations.members(
     //   req.body.channel_id
     // );
-    const param = {
+    const params = {
       channel: "CUNV0K3AN",
       pretty: 1,
     };
 
     var config = {
       method: "get",
-      url: "https://slack.com/api/conversations.members?channel=CUNV0K3AN&pretty=1",
+      // url: "https://slack.com/api/conversations.members?channel=CUNV0K3AN&pretty=1",
+      url: "https://slack.com/api/conversations.members",
+      params: params,
       headers: {
         Authorization: "Bearer " + token,
       },
     };
 
-    axios(config)
+    let channelUserNameList = [];
+    await axios(config)
       .then(function (response) {
-        console.log(JSON.stringify(response.data));
+        channelUserNameList = response.data.members;
       })
       .catch(function (error) {
         console.log(error);
       });
-
-    let channelUserNameList = [];
-    // await axios
-    //   .get("https://slack.com/api/conversations.members", { param })
-    //   .then(function (response) {
-    //     console.log(response);
-    //     channelUserNameList = response.members;
-    //   });
     console.log(channelUserNameList);
 
     // const result = await web.chat.postMessage({
