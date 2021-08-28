@@ -25,6 +25,7 @@ router.post("/startSlackSession", async function (req, res) {
     // userNameList = storeUserNameToArray(userList.members);
     // console.log("userNameList" + userNameList);
     const channelUserNameList = await slackClient.conversations.members(
+      token,
       req.body.channel_id
     );
     console.log(channelUserNameList.members);
