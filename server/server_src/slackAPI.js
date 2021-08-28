@@ -17,55 +17,23 @@ router.post("/startSlackSession", async function (req, res) {
   console.log(req.headers);
   console.log("---------------------body---------------------");
   console.log(req.body);
-  console.log(req.body.team_domain) + "でセッション名決めればいいか．↓とか";
-  console.log("slack_" + req.body.team_domain);
-  console.log("---------------------req.body.channel_id---------------------");
-  console.log(req.body.channel_id);
+  // console.log(req.body.team_domain) + "でセッション名決めればいいか．↓とか";
+  // console.log("slack_" + req.body.team_domain);
+  // console.log("---------------------req.body.channel_id---------------------");
+  // console.log(req.body.channel_id);
+  const sessionName = "slack" + req.body.channel_id;
   try {
-    // const userList = await slackClient.users.list();
-    // userNameList = storeUserNameToArray(userList.members);
-    // console.log("userNameList" + userNameList);
-    // const channelUserNameList = await slackClient.conversations.members(
-    //   req.body.channel_id
-    // );
-    const params = {
-      channel: "CUNV0K3AN",
-      pretty: 1,
-    };
-
-    var config = {
-      method: "get",
-      // url: "https://slack.com/api/conversations.members?channel=CUNV0K3AN&pretty=1",
-      url: "https://slack.com/api/conversations.members",
-      params: params,
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
-    let channelUserNameList = [];
-    await axios(config)
-      .then(function (response) {
-        channelUserNameList = response.data.members;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    console.log(channelUserNameList);
-
-    // const result = await web.chat.postMessage({
-    //   text: "Hello world!",
-    // });
-    // console.log(result);
-    // return "success";
+    const chMembersIdList = await getChMembersIdList(req.body.channel_id);
+    const chMembersNameList = await getChMembersNameList(chMembersIdList);
+    makeWarikanSession(sessionName, chMembersIdList);
     let data = {
       response_type: "in_channel",
-      text: "302: Found",
-      attachments: [
-        {
-          image_url: "https://http.cat/302.jpg",
-        },
-      ],
+      text:
+        "割勘のセッションを開始しました（" +
+        constants.appURL +
+        "?sessionName=" +
+        sessionName +
+        "）",
     };
     res.json(data);
   } catch (e) {
@@ -73,14 +41,30 @@ router.post("/startSlackSession", async function (req, res) {
   }
 });
 
-// function storeUserNameToArray(usersArray) {
-//   let userName = "";
-//   let userNameList = [];
-//   usersArray.forEach(function (user) {
-//     userName = user["name"];
-//     userNameList.push(userName);
-//     // Store the entire user object (you may not need all of the info)
-//   });
-//   return userNameList;
-// }
+async function getChMembersIdList(channelId) {
+  const params = {
+    channel: channelId,
+    pretty: 1,
+  };
+  var config = {
+    method: "get",
+    url: "https://slack.com/api/conversations.members",
+    params: params,
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
+
+  let channelUserIdList = [];
+  await axios(config)
+    .then(function (response) {
+      channelUserIdList = response.data.members;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  return channelUserIdList;
+}
+
+async function getChMembersNameList(sessionName, chMembersIdList) {}
 module.exports = router;
