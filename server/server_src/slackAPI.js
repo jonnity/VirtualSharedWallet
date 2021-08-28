@@ -19,8 +19,8 @@ router.post("/startSlackSession", async function (req, res) {
   console.log(req.body);
   console.log(req.body.team_domain) + "でセッション名決めればいいか．↓とか";
   console.log("slack_" + req.body.team_domain);
-  const userList = await client.users.list();
-  console.log("client.users.list();" + userList);
+  const userList = await slackClient.users.list();
+  console.log("slackClient.users.list();" + userList);
   // const result = await web.chat.postMessage({
   //   text: "Hello world!",
   // });
