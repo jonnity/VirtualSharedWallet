@@ -13,11 +13,21 @@ const web = new WebClient(token);
 
 router.post("/startSlackSession", async function (req, res) {
   console.log(req);
-  const result = await web.chat.postMessage({
-    text: "Hello world!",
-  });
-  console.log(result);
-  return "success";
+  // const result = await web.chat.postMessage({
+  //   text: "Hello world!",
+  // });
+  // console.log(result);
+  // return "success";
+  let data = {
+    response_type: "in_channel",
+    text: "302: Found",
+    attachments: [
+      {
+        image_url: "https://http.cat/302.jpg",
+      },
+    ],
+  };
+  res.json(data);
 });
 
 module.exports = router;
