@@ -19,9 +19,13 @@ router.post("/startSlackSession", async function (req, res) {
   console.log(req.body.team_domain) + "でセッション名決めればいいか．↓とか";
   console.log("slack_" + req.body.team_domain);
   try {
-    const userList = await slackClient.users.list();
-    userNameList = storeUserNameToArray(userList.members);
-    console.log("userNameList" + userNameList);
+    // const userList = await slackClient.users.list();
+    // userNameList = storeUserNameToArray(userList.members);
+    // console.log("userNameList" + userNameList);
+    const channelUserNameList = await slackClient.conversations.members(
+      req.body.channel_id
+    );
+    console.log(channelUserNameList);
 
     // const result = await web.chat.postMessage({
     //   text: "Hello world!",
@@ -43,14 +47,14 @@ router.post("/startSlackSession", async function (req, res) {
   }
 });
 
-function storeUserNameToArray(usersArray) {
-  let userName = "";
-  let userNameList = [];
-  usersArray.forEach(function (user) {
-    userName = user["name"];
-    userNameList.push(userName);
-    // Store the entire user object (you may not need all of the info)
-  });
-  return userNameList;
-}
+// function storeUserNameToArray(usersArray) {
+//   let userName = "";
+//   let userNameList = [];
+//   usersArray.forEach(function (user) {
+//     userName = user["name"];
+//     userNameList.push(userName);
+//     // Store the entire user object (you may not need all of the info)
+//   });
+//   return userNameList;
+// }
 module.exports = router;
