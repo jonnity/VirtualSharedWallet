@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const router = express.Router();
+const axios = require("axios");
 const constants = require("./constants");
 const { WebClient } = require("@slack/web-api");
 // Read a token from the environment variables
@@ -36,7 +37,7 @@ router.post("/startSlackSession", async function (req, res) {
       pretty: 1,
     };
     await axios
-      .get("https://slack.com/api/conversations.members", {param})
+      .get("https://slack.com/api/conversations.members", { param })
       .then(function (response) {
         console.log(response);
         channelUserNameList = response.members;
