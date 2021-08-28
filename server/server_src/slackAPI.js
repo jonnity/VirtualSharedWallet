@@ -37,8 +37,7 @@ router.post("/startSlackSession", async function (req, res) {
       method: "get",
       url: "https://slack.com/api/conversations.members?channel=CUNV0K3AN&pretty=1",
       headers: {
-        Authorization:
-          "Bearer xoxb-987792858133-2421753149382-pDD4QZYPHSdfxYPmT0JLEEmJ",
+        Authorization: "Bearer " + token,
       },
     };
 
