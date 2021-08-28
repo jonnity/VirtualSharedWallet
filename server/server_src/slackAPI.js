@@ -7,15 +7,20 @@ const { WebClient } = require("@slack/web-api");
 // Read a token from the environment variables
 const token = process.env.SLACK_TOKEN;
 // Initialize
-const web = new WebClient(token);
+const slackClient = new WebClient(token);
 
 // const dbAPI = require("./dbAPI");
 
 router.post("/startSlackSession", async function (req, res) {
+  console.log(slackClient);
   console.log("---------------------headers---------------------");
   console.log(req.headers);
   console.log("---------------------body---------------------");
   console.log(req.body);
+  console.log(req.body.team_domain) + "でセッション名決めればいいか．↓とか";
+  console.log("slack_" + req.body.team_domain);
+  const userList = await client.users.list();
+  console.log("client.users.list();" + userList);
   // const result = await web.chat.postMessage({
   //   text: "Hello world!",
   // });
