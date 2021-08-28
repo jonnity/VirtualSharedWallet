@@ -12,6 +12,7 @@ const slackAPI = require("./server_src/slackAPI");
 const app = express();
 app.use(history());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/dbAPI", dbAPI);
 app.use("/slackAPI", slackAPI);
