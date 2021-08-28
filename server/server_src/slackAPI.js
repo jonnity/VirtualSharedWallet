@@ -24,11 +24,24 @@ router.post("/startSlackSession", async function (req, res) {
     // const userList = await slackClient.users.list();
     // userNameList = storeUserNameToArray(userList.members);
     // console.log("userNameList" + userNameList);
-    const channelUserNameList = await slackClient.conversations.members(
-      token,
-      req.body.channel_id
-    );
-    console.log(channelUserNameList.members);
+    // const channelUserNameList = await slackClient.conversations.members(
+    //   req.body.channel_id
+    // );
+    const channelUserNameList = [];
+    const param = {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      channel: "CUNV0K3AN",
+      pretty: 1,
+    };
+    await axios
+      .get("https://slack.com/api/conversations.members", {param})
+      .then(function (response) {
+        console.log(response);
+        channelUserNameList = response.members;
+      });
+    console.log(channelUserNameList);
 
     // const result = await web.chat.postMessage({
     //   text: "Hello world!",
