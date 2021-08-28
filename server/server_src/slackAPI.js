@@ -20,8 +20,8 @@ router.post("/startSlackSession", async function (req, res) {
   console.log("slack_" + req.body.team_domain);
   try {
     const userList = await slackClient.users.list();
-    consoleUsers(userList.members);
-    // console.log("slackClient.users.list();" + userList.members);
+    userNameList = storeUserNameToArray(userList.members);
+    console.log("userNameList" + userNameList);
 
     // const result = await web.chat.postMessage({
     //   text: "Hello world!",
@@ -43,13 +43,14 @@ router.post("/startSlackSession", async function (req, res) {
   }
 });
 
-function consoleUsers(usersArray) {
-  let userId = "";
+function storeUserNameToArray(usersArray) {
+  let userName = "";
+  let userNameList = [];
   usersArray.forEach(function (user) {
-    // Key user info on their unique user ID
-    userId = user["id"];
-    console.log(userId);
+    userName = user["name"];
+    userNameList.push(userName);
     // Store the entire user object (you may not need all of the info)
   });
+  return userNameList;
 }
 module.exports = router;
