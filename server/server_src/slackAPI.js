@@ -9,9 +9,9 @@ const token = process.env.SLACK_TOKEN;
 // Initialize
 
 // const dbAPI = require("./dbAPI");
+const slackClient = new WebClient(token);
 
 router.post("/startSlackSession", async function (req, res) {
-  const slackClient = new WebClient(re.body.token);
   console.log("---------------------headers---------------------");
   console.log(req.headers);
   console.log("---------------------body---------------------");
