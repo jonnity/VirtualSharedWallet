@@ -24,8 +24,9 @@ router.post("/startSlackSession", async function (req, res) {
   const sessionName = "slack" + req.body.channel_id;
   try {
     const chMembersIdList = await getChMembersIdList(req.body.channel_id);
-    const chMembersNameList = await getChMembersNameList(chMembersIdList);
-    makeWarikanSession(sessionName, chMembersIdList);
+    const chMembersNameList = await makeUserNameList(chMembersIdList);
+    console.log(chMembersNameList);
+    // makeWarikanSession(sessionName, chMembersIdList);
     let data = {
       response_type: "in_channel",
       text:
@@ -46,7 +47,7 @@ async function getChMembersIdList(channelId) {
     channel: channelId,
     pretty: 1,
   };
-  var config = {
+  var axiosConfigChMembers = {
     method: "get",
     url: "https://slack.com/api/conversations.members",
     params: params,
@@ -56,7 +57,7 @@ async function getChMembersIdList(channelId) {
   };
 
   let channelUserIdList = [];
-  await axios(config)
+  await axios(axiosConfigChMembers)
     .then(function (response) {
       channelUserIdList = response.data.members;
     })
@@ -66,5 +67,43 @@ async function getChMembersIdList(channelId) {
   return channelUserIdList;
 }
 
-async function getChMembersNameList(sessionName, chMembersIdList) {}
+//
+// 入力：ユーザーIDのリスト
+// 出力：ボットではないユーザーのユーザー名のリスト
+//
+async function makeUserNameList(sessionName, userIdList) {
+  let userNameList = [];
+  let getUserInfoPromiseList = [];
+  for (let ui = 0; ui < userIdList.length; ui++) {
+    const params = {
+      user: userIdList[ui],
+      pretty: 1,
+    };
+    axiosConfigUserInfo = {
+      method: "get",
+      url: "https://slack.com/api/users.info",
+      params: params,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    };
+    getUserInfoPromiseList.push(axios(axiosConfigUserInfo));
+  }
+  await Promise.all(getUserInfoPromiseList)
+    .then(function (values) {
+      for (let vi = 0; vi < values.length; vi++) {
+        if (!values[vi].ok) {
+          continue;
+        }
+        if (!values[vi].user.is_bot) {
+          userNameList.push(values.user.name);
+        }
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  return userNameList;
+}
+
 module.exports = router;
