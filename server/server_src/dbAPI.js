@@ -240,31 +240,6 @@ router.post("/resisterSession", function (req, res) {
       .finally(function () {
         client.end();
       });
-    // resisterSession(client, sessionName, password)
-    //   .then(function (result) {
-    //     console.log(result);
-    //     for (let un = 0; un < userNameList.length; un++) {
-    //       const name = userNameList[un];
-    //       const payment = paymentList[un];
-    //       resisterUserInfo(client, sessionName, name, payment)
-    //         .then(function (result) {
-    //           console.log(result);
-    //         })
-    //         .catch(function (error) {
-    //           console.log(error);
-    //         });
-    //     }
-    //     res.send({
-    //       result: constants.success,
-    //       shareLink: constants.appURL + "?sessionName=" + sessionName,
-    //     });
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   })
-    //   .finally(function () {
-    //     client.end();
-    //   });
   } catch (e) {
     console.log(e);
   }

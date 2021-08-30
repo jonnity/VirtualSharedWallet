@@ -20,9 +20,16 @@ router.post("/startSlackSession", async function (req, res) {
   try {
     const chMembersIdList = await getChMembersIdList(req.body.channel_id);
     const chMembersNameList = await makeUserNameList(chMembersIdList);
-    makeWarikanSession(sessionName, chMembersNameList);
+    const result = await makeWarikanSession(sessionName, chMembersNameList);
 
-    let data = {
+    let data;
+    if (result === constants.error) {
+      data = {
+        test: "エラーが発生しました",
+      };
+      res.json(data);
+    }
+    data = {
       response_type: "in_channel",
       text:
         "割勘のセッションを開始しました（" +
@@ -104,17 +111,30 @@ async function makeUserNameList(userIdList) {
 //
 // 入力：登録するセッションネーム
 //
-async function makeWarikanSession(sessionName, chMembersIdList) {
+async function makeWarikanSession(sessionName, chMembersNameList) {
+  let result;
   const dbAPI = require("./dbAPI");
   client = dbAPI.clientConnect();
-  dbAPI
-    .resisterSession(client, sessionName, constants.throughPassword)
-    .then(function (sessionResponse) {
-      dbAPI.resisterUserInfo(client, sessionName);
+  await dbAPI
+    .initSession(
+      client,
+      sessionName,
+      constants.throughPassword,
+      chMembersNameList,
+      new Array(chMembersNameList.length).fill(0)
+    )
+    .then(function (response) {
+      console.log(response);
+      result = constants.success;
     })
     .catch(function (error) {
       console.log(error);
+      result = constants.error;
+    })
+    .finally(function () {
+      client.end();
     });
+  return result;
 }
 
 module.exports = router;
