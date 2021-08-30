@@ -59,6 +59,7 @@ function checkSessionNameDuplicate(client, sessionName) {
   };
   return client.query(queryCheckSessionName);
 }
+exports.checkSessionNameDuplicate = checkSessionNameDuplicate;
 
 function getUserInfo(client, sessionName) {
   const queryGetUserInfo = {
