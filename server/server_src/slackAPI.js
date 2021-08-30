@@ -28,6 +28,7 @@ router.post("/startSlackSession", async function (req, res) {
           " ）",
       };
       res.json(data);
+      return;
     }
     const chMembersIdList = await getChMembersIdList(req.body.channel_id);
     const chMembersNameList = await makeUserNameList(chMembersIdList);
@@ -154,11 +155,11 @@ async function makeWarikanSession(sessionName, chMembersNameList) {
 //
 async function checkSessionName(sessionName) {
   client = dbAPI.clientConnect();
-  let isDuplicated;
+  let isDuplicated = true;
   dbAPI
     .checkSessionNameDuplicate(client, sessionName)
     .then(function (result) {
-      isDuplicated = result.rows[0] !== undefined;
+      isDuplicated = !(result.rows[0] == undefined);
     })
     .catch(function (error) {
       console.log(error);
