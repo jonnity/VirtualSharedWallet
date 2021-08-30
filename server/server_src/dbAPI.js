@@ -148,6 +148,7 @@ async function initSession(
   }
   return Promise.all(promiseList);
 }
+exports.initSession = initSession;
 
 router.post("/checkSessionName", function (req, res) {
   const client = clientConnect();
