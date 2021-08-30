@@ -12,24 +12,33 @@ router.post("/startSlackSession", async function (req, res) {
   console.log(req.headers);
   console.log("---------------------body---------------------");
   console.log(req.body);
-  // console.log(req.body.team_domain) + "でセッション名決めればいいか．↓とか";
-  // console.log("slack_" + req.body.team_domain);
-  // console.log("---------------------req.body.channel_id---------------------");
-  // console.log(req.body.channel_id);
   const sessionName = "slack_" + req.body.team_domain + req.body.channel_id;
   try {
+    const isDuplicated = await checkSessionName(sessionName);
+    if (isDuplicated) {
+      let data = {
+        response_type: "in_channel",
+        text:
+          "すでにセッションが登録されています（ " +
+          constants.appURL +
+          "?sessionName=" +
+          sessionName +
+          " ）",
+      };
+      res.json(data);
+    }
     const chMembersIdList = await getChMembersIdList(req.body.channel_id);
     const chMembersNameList = await makeUserNameList(chMembersIdList);
     const result = await makeWarikanSession(sessionName, chMembersNameList);
 
-    let data;
     if (result === constants.error) {
-      data = {
-        test: "エラーが発生しました",
+      let data = {
+        text: "エラーが発生しました",
       };
       res.json(data);
+      return;
     }
-    data = {
+    let data = {
       response_type: "in_channel",
       text:
         "割勘のセッションを開始しました（ " +
@@ -110,6 +119,7 @@ async function makeUserNameList(userIdList) {
 
 //
 // 入力：登録するセッションネーム
+// 出力：成功(success)か否(error)か
 //
 async function makeWarikanSession(sessionName, chMembersNameList) {
   let result;
@@ -135,6 +145,27 @@ async function makeWarikanSession(sessionName, chMembersNameList) {
       client.end();
     });
   return result;
+}
+
+//
+// 入力：セッション名
+// 出力：セッション名にかぶりがあるかどうか
+//
+async function checkSessionName(sessionName) {
+  client = dbAPI.clientConnect();
+  let isDuplicated;
+  dbAPI
+    .checkSessionNameDuplicate(client, sessionName)
+    .then(function (result) {
+      isDuplicated = result.rows[0] !== undefined;
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(function () {
+      client.end();
+    });
+  return isDuplicated;
 }
 
 module.exports = router;
