@@ -146,7 +146,7 @@ async function initSession(
       resisterUserInfo(client, userNameList[ui], paymentList[ui])
     );
   }
-  Promise.all(promiseList);
+  return Promise.all(promiseList);
 }
 
 router.post("/checkSessionName", function (req, res) {
