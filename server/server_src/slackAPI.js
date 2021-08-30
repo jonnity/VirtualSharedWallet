@@ -32,11 +32,11 @@ router.post("/startSlackSession", async function (req, res) {
     data = {
       response_type: "in_channel",
       text:
-        "割勘のセッションを開始しました（" +
+        "割勘のセッションを開始しました（ " +
         constants.appURL +
         "?sessionName=" +
         sessionName +
-        "）",
+        " ）",
     };
     res.json(data);
   } catch (e) {
