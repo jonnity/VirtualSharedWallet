@@ -23,6 +23,7 @@ function clientConnect() {
     console.log(e);
   }
 }
+exports.clientConnect = clientConnect;
 
 async function passwordAuthentication(client, sessionName, cipheredPassword) {
   const myCipher = require("./myCipher");
@@ -74,6 +75,7 @@ function resisterSession(client, sessionName, password) {
   };
   return client.query(queryResisterSession);
 }
+exports.resisterSession = resisterSession;
 
 function resisterUserInfo(client, sessionName, userName, payment) {
   const queryResisterUserInfo = {
@@ -82,6 +84,7 @@ function resisterUserInfo(client, sessionName, userName, payment) {
   };
   return client.query(queryResisterUserInfo);
 }
+exports.resisterUserInfo = resisterUserInfo;
 
 function deleteUser(client, sessionName, userName) {
   const queryDeleteUser = {
@@ -127,6 +130,23 @@ async function updateUpdateTime(client, sessionName) {
   } catch (e) {
     console.log(e);
   }
+}
+
+async function initSession(
+  client,
+  sessionName,
+  password,
+  userNameList,
+  paymentList
+) {
+  promiseList = [];
+  promiseList.push(resisterSession(client, sessionName, password));
+  for (let ui = 0; ui < userNameList.length; ui++) {
+    resisterUsersPromise.push(
+      resisterUserInfo(client, userNameList[ui], paymentList[ui])
+    );
+  }
+  Promise.all(promiseList);
 }
 
 router.post("/checkSessionName", function (req, res) {
@@ -207,20 +227,8 @@ router.post("/resisterSession", function (req, res) {
     const userNameList = req.body.userNameList;
     const paymentList = req.body.paymentList;
 
-    resisterSession(client, sessionName, password)
-      .then(function (result) {
-        console.log(result);
-        for (let un = 0; un < userNameList.length; un++) {
-          const name = userNameList[un];
-          const payment = paymentList[un];
-          resisterUserInfo(client, sessionName, name, payment)
-            .then(function (result) {
-              console.log(result);
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-        }
+    initSession(client, sessionName, password, userNameList, paymentList)
+      .then(function (response) {
         res.send({
           result: constants.success,
           shareLink: constants.appURL + "?sessionName=" + sessionName,
@@ -232,6 +240,31 @@ router.post("/resisterSession", function (req, res) {
       .finally(function () {
         client.end();
       });
+    // resisterSession(client, sessionName, password)
+    //   .then(function (result) {
+    //     console.log(result);
+    //     for (let un = 0; un < userNameList.length; un++) {
+    //       const name = userNameList[un];
+    //       const payment = paymentList[un];
+    //       resisterUserInfo(client, sessionName, name, payment)
+    //         .then(function (result) {
+    //           console.log(result);
+    //         })
+    //         .catch(function (error) {
+    //           console.log(error);
+    //         });
+    //     }
+    //     res.send({
+    //       result: constants.success,
+    //       shareLink: constants.appURL + "?sessionName=" + sessionName,
+    //     });
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   })
+    //   .finally(function () {
+    //     client.end();
+    //   });
   } catch (e) {
     console.log(e);
   }

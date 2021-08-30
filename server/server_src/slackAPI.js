@@ -4,13 +4,8 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 const constants = require("./constants");
-const { WebClient } = require("@slack/web-api");
-// Read a token from the environment variables
-const token = process.env.SLACK_TOKEN;
-// Initialize
 
-// const dbAPI = require("./dbAPI");
-// const slackClient = new WebClient(token);
+const token = process.env.SLACK_TOKEN;
 
 router.post("/startSlackSession", async function (req, res) {
   console.log("---------------------headers---------------------");
@@ -21,13 +16,12 @@ router.post("/startSlackSession", async function (req, res) {
   // console.log("slack_" + req.body.team_domain);
   // console.log("---------------------req.body.channel_id---------------------");
   // console.log(req.body.channel_id);
-  const sessionName = "slack" + req.body.channel_id;
+  const sessionName = "slack_" + req.body.team_domain + req.body.channel_id;
   try {
     const chMembersIdList = await getChMembersIdList(req.body.channel_id);
-    console.log(chMembersIdList);
     const chMembersNameList = await makeUserNameList(chMembersIdList);
-    console.log("chMembersNameList: " + chMembersNameList);
-    // makeWarikanSession(sessionName, chMembersIdList);
+    makeWarikanSession(sessionName, chMembersNameList);
+
     let data = {
       response_type: "in_channel",
       text:
@@ -105,6 +99,22 @@ async function makeUserNameList(userIdList) {
       console.log(error);
     });
   return userNameList;
+}
+
+//
+// 入力：登録するセッションネーム
+//
+async function makeWarikanSession(sessionName, chMembersIdList) {
+  const dbAPI = require("./dbAPI");
+  client = dbAPI.clientConnect();
+  dbAPI
+    .resisterSession(client, sessionName, constants.throughPassword)
+    .then(function (sessionResponse) {
+      dbAPI.resisterUserInfo(client, sessionName);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 }
 
 module.exports = router;
