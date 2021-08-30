@@ -443,4 +443,4 @@ router.post("/encryptPassword", function (req, res) {
   res.send({ encryptedPassword: myCipher.myEncrypt(plainPassword) });
 });
 
-module.exports = router;
+exports.router = router;

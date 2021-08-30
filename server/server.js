@@ -6,7 +6,7 @@ const history = require("connect-history-api-fallback");
 // const slackSigningSecret = process.env.SLACK_SIGNING_SECRET;
 // const slackEvents = createEventAdapter(slackSigningSecret);
 
-const dbAPI = require("./server_src/dbAPI");
+const dbAPI = require("./server_src/dbAPI").router;
 const slackAPI = require("./server_src/slackAPI");
 
 const app = express();
