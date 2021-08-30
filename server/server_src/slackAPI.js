@@ -10,7 +10,7 @@ const token = process.env.SLACK_TOKEN;
 // Initialize
 
 // const dbAPI = require("./dbAPI");
-const slackClient = new WebClient(token);
+// const slackClient = new WebClient(token);
 
 router.post("/startSlackSession", async function (req, res) {
   console.log("---------------------headers---------------------");
@@ -26,7 +26,7 @@ router.post("/startSlackSession", async function (req, res) {
     const chMembersIdList = await getChMembersIdList(req.body.channel_id);
     console.log(chMembersIdList);
     const chMembersNameList = await makeUserNameList(chMembersIdList);
-    console.log(chMembersNameList);
+    console.log("chMembersNameList: " + chMembersNameList);
     // makeWarikanSession(sessionName, chMembersIdList);
     let data = {
       response_type: "in_channel",
@@ -92,13 +92,12 @@ async function makeUserNameList(userIdList) {
   }
   await Promise.all(getUserInfoPromiseList)
     .then(function (values) {
-      console.log(values.data.user);
       for (let vi = 0; vi < values.length; vi++) {
         if (!values[vi].data.ok) {
           continue;
         }
         if (!values[vi].data.user.is_bot) {
-          userNameList.push(values.data.user.name);
+          userNameList.push(values[vi].data.user.name);
         }
       }
     })
