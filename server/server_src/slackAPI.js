@@ -24,6 +24,7 @@ router.post("/startSlackSession", async function (req, res) {
   const sessionName = "slack" + req.body.channel_id;
   try {
     const chMembersIdList = await getChMembersIdList(req.body.channel_id);
+    console.log(chMembersIdList);
     const chMembersNameList = await makeUserNameList(chMembersIdList);
     console.log(chMembersNameList);
     // makeWarikanSession(sessionName, chMembersIdList);
@@ -91,6 +92,7 @@ async function makeUserNameList(userIdList) {
   }
   await Promise.all(getUserInfoPromiseList)
     .then(function (values) {
+      console.log(values);
       for (let vi = 0; vi < values.length; vi++) {
         if (!values[vi].ok) {
           continue;
