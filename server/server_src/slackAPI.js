@@ -92,7 +92,7 @@ async function makeUserNameList(userIdList) {
   }
   await Promise.all(getUserInfoPromiseList)
     .then(function (values) {
-      console.log(values);
+      console.log(values.data.user);
       for (let vi = 0; vi < values.length; vi++) {
         if (!values[vi].data.ok) {
           continue;
