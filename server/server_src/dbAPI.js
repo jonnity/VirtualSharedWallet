@@ -8,13 +8,13 @@ const { get } = require("./slackAPI");
 
 function clientConnect() {
   const postgreInfo = {
-    // connectionString: process.env.DATABASE_URL,
-    // ssl: { rejectUnauthorized: false },
-    user: process.env.POSTGRE_USER,
-    password: process.env.POSTGRE_PASS,
-    host: process.env.POSTGRE_HOST,
-    port: process.env.POSTGRE_PORT,
-    database: process.env.POSTGRE_DB_NAME,
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+    // user: process.env.POSTGRE_USER,
+    // password: process.env.POSTGRE_PASS,
+    // host: process.env.POSTGRE_HOST,
+    // port: process.env.POSTGRE_PORT,
+    // database: process.env.POSTGRE_DB_NAME,
   };
   try {
     const client = new Client(postgreInfo);
