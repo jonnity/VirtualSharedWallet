@@ -9,11 +9,10 @@ const dbAPI = require("./dbAPI");
 
 const token = process.env.SLACK_TOKEN;
 
+//
+// slackのチャンネルにいるBotでないメンバーをユーザーとして，割勘セッションの開始
+//
 router.post("/startSlackSession", async function (req, res) {
-  console.log("---------------------headers---------------------");
-  console.log(req.headers);
-  console.log("---------------------body---------------------");
-  console.log(req.body);
   const sessionName = "slack_" + req.body.team_domain + req.body.channel_id;
   try {
     const isDuplicated = await checkSessionName(sessionName);
@@ -56,12 +55,76 @@ router.post("/startSlackSession", async function (req, res) {
   }
 });
 
+//
+// 指定されたユーザーに，指定された金額の支払いを記録
+//
+router.post("/slackPayment", async function (req, res) {
+  const sessionName = "slack_" + req.body.team_domain + req.body.channel_id;
+  try {
+    const isDuplicated = await checkSessionName(sessionName);
+    if (!isDuplicated) {
+      let data = {
+        response_type: "in_channel",
+        text:
+          'セッションが登録されていません．まずは "/waristart"を実行してください' +
+          "（チャンネル内のユーザー（Botを除く）でセッションが開始されます）",
+      };
+      res.json(data);
+      return;
+    }
+
+    const texts = req.body.text.split(" ");
+    const payment = texts[1];
+    const payerNameAt = texts[0].split("@");
+    let payerName = "";
+    for (let ati = 1; ati < payerNameAt.length; ati++) {
+      payerName += payerNameAt[ati];
+    }
+
+    const resisterSuccess = await resisterPayment(
+      sessionName,
+      payerName,
+      payment
+    );
+    let data;
+    if (resisterSuccess) {
+      leastPaymentUserName = await whoPaysLeast(sessionName);
+      data = {
+        response_type: "in_channel",
+        text:
+          "現段階で最も少ない支払いなのは " +
+          leastPaymentUserName.trim() +
+          " さんです．",
+      };
+    } else {
+      data = {
+        text: "支払いの登録に失敗しました",
+      };
+    }
+    res.json(data);
+  } catch (e) {
+    const data = { text: "エラーが発生しました．引数を確認してください．" };
+    res.json(data);
+    console.log(e);
+  }
+});
+
+async function whoPaysLeast(sessionName) {
+  const client = dbAPI.clientConnect();
+  const sessionInfo = await dbAPI.getSessionInfo(client, sessionName);
+
+  const minPayment = Math.min(...sessionInfo.paymentList);
+  const leastIndex = sessionInfo.paymentList.indexOf(minPayment);
+  const leastPaymentUserName = sessionInfo.userNameList[leastIndex];
+  return leastPaymentUserName;
+}
+
 async function getChMembersIdList(channelId) {
   const params = {
     channel: channelId,
     pretty: 1,
   };
-  var axiosConfigChMembers = {
+  const axiosConfigChMembers = {
     method: "get",
     url: "https://slack.com/api/conversations.members",
     params: params,
@@ -156,7 +219,7 @@ async function makeWarikanSession(sessionName, chMembersNameList) {
 async function checkSessionName(sessionName) {
   client = dbAPI.clientConnect();
   let isDuplicated = true;
-  dbAPI
+  await dbAPI
     .checkSessionNameDuplicate(client, sessionName)
     .then(function (result) {
       isDuplicated = !(result.rows[0] == undefined);
@@ -168,6 +231,30 @@ async function checkSessionName(sessionName) {
       client.end();
     });
   return isDuplicated;
+}
+
+//
+// 入力1：支払いをするユーザー名
+// 入力2：支払金額
+// 出力：成功か否か
+//
+async function resisterPayment(sessionName, userName, paymentAmount) {
+  client = dbAPI.clientConnect();
+  let success = false;
+  await dbAPI
+    .updatePayment(client, sessionName, userName, paymentAmount)
+    .then(function (response) {
+      success = true;
+      console.log(response);
+    })
+    .catch(function (error) {
+      success = false;
+      console.log(error);
+    })
+    .finally(function () {
+      client.end();
+    });
+  return success;
 }
 
 module.exports = router;
