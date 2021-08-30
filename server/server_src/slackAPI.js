@@ -94,11 +94,11 @@ async function makeUserNameList(userIdList) {
     .then(function (values) {
       console.log(values);
       for (let vi = 0; vi < values.length; vi++) {
-        if (!values[vi].ok) {
+        if (!values[vi].data.ok) {
           continue;
         }
-        if (!values[vi].user.is_bot) {
-          userNameList.push(values.user.name);
+        if (!values[vi].data.user.is_bot) {
+          userNameList.push(values.data.user.name);
         }
       }
     })
