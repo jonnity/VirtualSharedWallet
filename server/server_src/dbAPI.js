@@ -142,7 +142,7 @@ async function initSession(
   promiseList = [];
   promiseList.push(resisterSession(client, sessionName, password));
   for (let ui = 0; ui < userNameList.length; ui++) {
-    resisterUsersPromise.push(
+    promiseList.push(
       resisterUserInfo(client, userNameList[ui], paymentList[ui])
     );
   }
