@@ -3,7 +3,9 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+
 const constants = require("./constants");
+const dbAPI = require("./dbAPI");
 
 const token = process.env.SLACK_TOKEN;
 
@@ -123,7 +125,6 @@ async function makeUserNameList(userIdList) {
 //
 async function makeWarikanSession(sessionName, chMembersNameList) {
   let result;
-  const dbAPI = require("./dbAPI");
   client = dbAPI.clientConnect();
   await dbAPI
     .initSession(
