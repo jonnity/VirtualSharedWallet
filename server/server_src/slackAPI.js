@@ -71,7 +71,7 @@ async function getChMembersIdList(channelId) {
 // 入力：ユーザーIDのリスト
 // 出力：ボットではないユーザーのユーザー名のリスト
 //
-async function makeUserNameList(sessionName, userIdList) {
+async function makeUserNameList(userIdList) {
   let userNameList = [];
   let getUserInfoPromiseList = [];
   for (let ui = 0; ui < userIdList.length; ui++) {
