@@ -92,7 +92,7 @@ router.post("/slackPayment", async function (req, res) {
       data = {
         response_type: "in_channel",
         text:
-          "現段階で最も少ない支払いなのは " +
+          "現段階で最も少ない支払いなのは @" +
           leastPaymentUserName.trim() +
           " さんです．",
       };
