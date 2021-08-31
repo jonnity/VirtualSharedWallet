@@ -257,4 +257,50 @@ async function resisterPayment(sessionName, userName, paymentAmount) {
   return success;
 }
 
+//
+// OAuth用のリダイレクト処理
+//
+app.get("/callback", function (req, res, next) {
+  const request = require("request");
+
+  const code = req.query.code;
+  if (code) {
+    var option = {
+      url:
+        "https://slack.com/api/oauth.access?client_id=" +
+        process.env.SLACK_CLIENR_ID +
+        "&client_secret=" +
+        process.env.SLACK_CLIENR_SECRET +
+        "&code=" +
+        code,
+      method: "GET",
+    };
+    request(option, (err0, res0, body0) => {
+      if (err0) {
+        return res.status(403).send({ status: false, error: err0 });
+      } else {
+        body0 = JSON.parse(body0);
+        var access_token = body0.access_token;
+
+        req.session.oauth = {};
+        req.session.oauth.provider = "slack";
+        req.session.oauth.user_id = body0.user_id;
+        req.session.oauth.team_id = body0.team_id;
+        req.session.oauth.team_name = body0.team_name;
+        req.session.oauth.access_token = body0.access_token;
+
+        var token = jwt.sign(req.session.oauth, settings.superSecret, {
+          expiresIn: "25h",
+        });
+        req.session.token = token;
+        //res.send( "Worked." );
+        res.redirect("/");
+      }
+    });
+  } else {
+    //next( new Error( "you are not supposed to be here." ) );
+    res.redirect("/");
+  }
+});
+
 module.exports = router;
