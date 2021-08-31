@@ -260,7 +260,7 @@ async function resisterPayment(sessionName, userName, paymentAmount) {
 //
 // OAuth用のリダイレクト処理
 //
-app.get("/callback", function (req, res, next) {
+router.get("/callback", function (req, res, next) {
   const request = require("request");
 
   const code = req.query.code;
