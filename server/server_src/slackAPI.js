@@ -13,10 +13,6 @@ const token = process.env.SLACK_TOKEN;
 // slackのチャンネルにいるBotでないメンバーをユーザーとして，割勘セッションの開始
 //
 router.post("/startSlackSession", async function (req, res) {
-  console.log("-------------header-------------");
-  console.log(req.headers);
-  console.log("-------------body-------------");
-  console.log(req.body);
   const sessionName = "slack_" + req.body.team_domain + req.body.channel_id;
   try {
     const isDuplicated = await checkSessionName(sessionName);
@@ -63,6 +59,10 @@ router.post("/startSlackSession", async function (req, res) {
 // 指定されたユーザーに，指定された金額の支払いを記録
 //
 router.post("/slackPayment", async function (req, res) {
+  console.log("-------------header-------------");
+  console.log(req.headers);
+  console.log("-------------body-------------");
+  console.log(req.body);
   const sessionName = "slack_" + req.body.team_domain + req.body.channel_id;
   try {
     const isDuplicated = await checkSessionName(sessionName);
