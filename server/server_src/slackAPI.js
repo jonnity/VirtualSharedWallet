@@ -59,10 +59,6 @@ router.post("/startSlackSession", async function (req, res) {
 // 指定されたユーザーに，指定された金額の支払いを記録
 //
 router.post("/slackPayment", async function (req, res) {
-  console.log("-------------header-------------");
-  console.log(req.headers);
-  console.log("-------------body-------------");
-  console.log(req.body);
   const sessionName = "slack_" + req.body.team_domain + req.body.channel_id;
   try {
     const isDuplicated = await checkSessionName(sessionName);
@@ -111,6 +107,57 @@ router.post("/slackPayment", async function (req, res) {
   } catch (e) {
     const data = { text: "エラーが発生しました．引数を確認してください．" };
     res.json(data);
+    console.log(e);
+  }
+});
+
+//
+// チャンネルの割勘セッションの情報（それぞれの平均との差額）を取得する
+//
+router.post("/getUserInfo", function (req, res) {
+  console.log("-------body-------\n" + req.body);
+  const sessionName = "slack_" + req.body.team_domain + req.body.channel_id;
+  try {
+    const isDuplicated = await checkSessionName(sessionName);
+    if (!isDuplicated) {
+      let data = {
+        response_type: "in_channel",
+        text:
+          'セッションが登録されていません．まずは "/waristart"を実行してください' +
+          "（チャンネル内のユーザー（Botを除く）でセッションが開始されます）",
+      };
+      res.json(data);
+      return;
+    }
+
+    const sessionInfo = await getSessionInfoFromDB(sessionName);
+    if (!sessionInfo.isSuccess) {
+      let data = {
+        text: "DBへのアクセスに失敗しました。再度お試しください",
+      };
+      res.json(data);
+      return;
+    }
+    let responseText = "";
+    for (let ui = 0; ui < sessionInfo.userInfo.length; ui++) {
+      const paymentStateText =
+        sessionInfo.userInfo.paymentDiff > 0
+          ? "円 立て替え中"
+          : "円 払う必要あり";
+      responseText +=
+        sessionInfo.userInfo.name +
+        "：" +
+        Math.abs(sessionInfo.userInfo.paymentDiff) +
+        paymentStateText +
+        "\n";
+    }
+    let data = {
+      response_type: "in_channel",
+      text: responseText,
+    };
+    res.json(data);
+    return;
+  } catch (e) {
     console.log(e);
   }
 });
@@ -261,6 +308,40 @@ async function resisterPayment(sessionName, userName, paymentAmount) {
       client.end();
     });
   return success;
+}
+
+//
+// 入力：セッション名
+// 出力：ユーザー名と平均との差額のリスト
+//
+async function getSessionInfoFromDB(sessionName) {
+  const client = dbAPI.clientConnect();
+  const sessionInfo = await dbAPI.getSessionInfo(client, sessionName);
+  const response = {
+    isSuccess: false,
+    userInfo: [],
+  };
+  if (!sessionInfo.isSuccess) {
+    console.log("セッション情報の取得に失敗");
+    response.isSuccess = false;
+    return response;
+  }
+
+  let paymentSum = 0;
+  for (let ui = 0; ui < sessionInfo.paymentList.length; ui++) {
+    paymentSum += sessionInfo.paymentList[ui];
+  }
+  const paymentAve = paymentSum / sessionInfo.paymentList.length;
+
+  for (let ui = 0; ui < sessionInfo.userNameList.length; ui++) {
+    let userInfo = {
+      name: sessionInfo.userNameList[ui],
+      paymentDiff: sessionInfo.paymentList[ui] - paymentAve,
+    };
+    response.userInfo.push(userInfo);
+  }
+  response.isSuccess = true;
+  return response;
 }
 
 //
