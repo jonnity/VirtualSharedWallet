@@ -294,12 +294,28 @@ router.get("/callback", function (req, res, next) {
         });
         req.session.token = token;
         //res.send( "Worked." );
-        res.redirect("/");
+        res.redirect("/slackAPI");
       }
     });
   } else {
     //next( new Error( "you are not supposed to be here." ) );
-    res.redirect("/");
+    res.redirect("/slackAPI");
+  }
+});
+app.get("/", function (req, res) {
+  if (req.session && req.session.token) {
+    var token = req.session.token;
+    jwt.verify(token, settings.superSecret, function (err, oauth) {
+      if (!err && oauth) {
+        //console.log( oauth );
+        res.render("index", { oauth: oauth });
+      } else {
+        console.log(err);
+        res.render("index", { oauth: null });
+      }
+    });
+  } else {
+    res.render("index", { oauth: null });
   }
 });
 
