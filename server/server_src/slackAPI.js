@@ -302,7 +302,7 @@ router.get("/callback", function (req, res, next) {
     res.redirect("/slackAPI");
   }
 });
-app.get("/", function (req, res) {
+router.get("/", function (req, res) {
   if (req.session && req.session.token) {
     var token = req.session.token;
     jwt.verify(token, settings.superSecret, function (err, oauth) {
