@@ -79,7 +79,7 @@ router.post("/slackPayment", async function (req, res) {
 
     const texts = req.body.text.split(" ");
     const payment = texts[1];
-    const atPayerId = text.split(/[<|>]/)[1];
+    const atPayerId = texts[0].split(/[<|>]/)[1];
     let payerId = "";
     for (let ati = 1; ati < atPayerId.length; ati++) {
       payerId += atPayerId[ati];
