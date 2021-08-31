@@ -77,15 +77,16 @@ router.post("/slackPayment", async function (req, res) {
       return;
     }
 
-    const texts = req.body.text.split(" ");
-    const payment = texts[1];
-    const atPayerId = texts[0].split(/[<|>]/)[1];
+    const receivedText = req.body.text;
+    const texts = receivedText.split(/[<|>]/);
+    const payment = Number(texts[3].trim());
+    const atPayerId = texts[1];
     let payerId = "";
     for (let ati = 1; ati < atPayerId.length; ati++) {
       payerId += atPayerId[ati];
     }
-    const payerRealName = await makeUserNameList([payerId])[0];
-
+    const payerRealNameList = await makeUserNameList([payerId]);
+    const payerRealName = payerRealNameList[0];
     const resisterSuccess = await resisterPayment(
       sessionName,
       payerRealName,
