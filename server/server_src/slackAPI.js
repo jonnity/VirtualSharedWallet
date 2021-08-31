@@ -177,7 +177,7 @@ async function makeUserNameList(userIdList) {
           continue;
         }
         if (!values[vi].data.user.is_bot) {
-          userNameList.push(values[vi].data.user.name);
+          userNameList.push(values[vi].data.user.real_name);
         }
       }
     })
