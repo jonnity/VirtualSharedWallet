@@ -44,6 +44,7 @@
       @repaymentEvent="repaymentEvent"
       @shareEvent="shareEvent"
       @loadEvent="loadEvent"
+      @disconnectEvent="$emit('disconnectEvent')"
     ></router-view>
   </div>
 </template>

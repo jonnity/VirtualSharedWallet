@@ -19,6 +19,7 @@
         @clickHelpButton="$emit('clickHelpButton')"
         @shareEvent="uploadAndShare"
         @loadEvent="loadUserInfo"
+        @disconnectEvent="updateUserInfo()"
       ></appBar>
       <v-row class="pa-2">
         <div v-for="un in userIterator" :key="un">

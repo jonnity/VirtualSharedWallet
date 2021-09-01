@@ -10,6 +10,12 @@
       @loadConfirmEvent="emitLoadEvent"
       @loadCancelEvent="loadFlag = false"
     ></loadSessionConfirmModal>
+    <confirmModal
+      v-if="disconnectConfirmFlag"
+      :confirmContents="disconnectConfirmContent"
+      @confirmEvent="disconnectSession"
+      @cancelEvent="disconnectConfirmFlag = false"
+    ></confirmModal>
     <v-container>
       <v-row align="center">
         <v-col>
@@ -18,6 +24,7 @@
         <v-col>
           <v-btn @click="checkSessionNameAndEmitShareEvent">共有</v-btn>
           <v-btn @click="checkSessionNameAndEmitLoadEvent">読込</v-btn>
+          <v-btn @click="disconnectConfirmFlag = true">クリア</v-btn>
         </v-col>
       </v-row>
       <v-row>
@@ -31,6 +38,7 @@
 import sessionNameTextField from "./../components/sessionNameTextField.vue";
 import shareSessionConfirmModal from "./../components/shareSessionConfirmModal.vue";
 import loadSessionConfirmModal from "./../components/loadSessionConfirmModal.vue";
+import confirmModal from "./../components/confirmModal.vue";
 
 import constants from "./../constants";
 import axios from "axios";
@@ -41,6 +49,7 @@ export default {
     sessionNameTextField,
     shareSessionConfirmModal,
     loadSessionConfirmModal,
+    confirmModal,
   },
   props: [""],
   data: function() {
@@ -50,9 +59,22 @@ export default {
       isError: false,
       shareFlag: false,
       loadFlag: false,
+      disconnectConfirmFlag: false,
     };
   },
-  computed: {},
+  computed: {
+    disconnectConfirmContent() {
+      const hasSessionConnection = this.$cookies.isKey(
+        constants.sessionNameKey
+      );
+      if (hasSessionConnection) {
+        const sessionName = this.$cookies.get(constants.sessionNameKey);
+        return `セッション（${sessionName}）の接続を解除します．よろしいですか？（サーバにデータは残ります．）`;
+      } else {
+        return `セッション接続がないため，ローカルのデータが破棄されます．よろしいですか？`;
+      }
+    },
+  },
   methods: {
     checkSessionNameAndEmitShareEvent() {
       const axiosConfigCheckSessionName = {
@@ -125,6 +147,12 @@ export default {
     emitLoadEvent() {
       this.$emit("loadEvent", this.sessionName);
       this.loadFlag = false;
+    },
+    disconnectSession() {
+      // remove all cookie
+      this.$cookies.keys().forEach((cookie) => this.$cookies.remove(cookie));
+      this.disconnectConfirmFlag = false;
+      this.$emit("disconnectEvent");
     },
   },
 };
