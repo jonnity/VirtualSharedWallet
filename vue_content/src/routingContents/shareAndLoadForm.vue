@@ -5,11 +5,14 @@
       @shareConfirmEvent="emitShareEvent"
       @shareCancelEvent="shareFlag = false"
     ></shareSessionConfirmModal>
-    <loadSessionConfirmModal
+    <confirmModal
       v-if="loadFlag"
-      @loadConfirmEvent="emitLoadEvent"
-      @loadCancelEvent="loadFlag = false"
-    ></loadSessionConfirmModal>
+      :confirmContents="
+        'サーバからデータを読み込むと「共有」していないデータは消えてしまいます．よろしいですか？'
+      "
+      @confirmEvent="emitLoadEvent"
+      @cancelEvent="loadFlag = false"
+    ></confirmModal>
     <confirmModal
       v-if="disconnectConfirmFlag"
       :confirmContents="disconnectConfirmContent"
@@ -37,7 +40,7 @@
 <script>
 import sessionNameTextField from "./../components/sessionNameTextField.vue";
 import shareSessionConfirmModal from "./../components/shareSessionConfirmModal.vue";
-import loadSessionConfirmModal from "./../components/loadSessionConfirmModal.vue";
+// import loadSessionConfirmModal from "./../components/loadSessionConfirmModal.vue";
 import confirmModal from "./../components/confirmModal.vue";
 
 import constants from "./../constants";
@@ -48,7 +51,7 @@ export default {
   components: {
     sessionNameTextField,
     shareSessionConfirmModal,
-    loadSessionConfirmModal,
+    // loadSessionConfirmModal,
     confirmModal,
   },
   props: [""],
