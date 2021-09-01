@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const { Client } = require("pg");
 const constants = require("./constants");
+const { get } = require("./slackAPI");
 
 function clientConnect() {
   const postgreInfo = {
@@ -23,6 +24,7 @@ function clientConnect() {
     console.log(e);
   }
 }
+exports.clientConnect = clientConnect;
 
 async function passwordAuthentication(client, sessionName, cipheredPassword) {
   const myCipher = require("./myCipher");
@@ -58,14 +60,38 @@ function checkSessionNameDuplicate(client, sessionName) {
   };
   return client.query(queryCheckSessionName);
 }
+exports.checkSessionNameDuplicate = checkSessionNameDuplicate;
 
-function getUserInfo(client, sessionName) {
-  const queryGetUserInfo = {
+async function getSessionInfo(client, sessionName) {
+  const queryGetSessionInfo = {
     text: "SELECT user_name, user_payment FROM users WHERE session_name = $1",
     values: [sessionName],
   };
-  return client.query(queryGetUserInfo);
+
+  let response = {
+    isSuccess: false,
+    userNameList: [],
+    paymentList: [],
+  };
+  await client
+    .query(queryGetSessionInfo)
+    .then(function (result) {
+      for (let un = 0; un < result.rows.length; un++) {
+        response.userNameList.push(result.rows[un].user_name);
+        response.paymentList.push(result.rows[un].user_payment);
+      }
+      response.isSuccess = true;
+    })
+    .catch(function (error) {
+      console.log(error);
+      response.isSuccess = false;
+    })
+    .finally(function () {
+      client.end();
+    });
+  return response;
 }
+exports.getSessionInfo = getSessionInfo;
 
 function resisterSession(client, sessionName, password) {
   const queryResisterSession = {
@@ -74,6 +100,7 @@ function resisterSession(client, sessionName, password) {
   };
   return client.query(queryResisterSession);
 }
+exports.resisterSession = resisterSession;
 
 function resisterUserInfo(client, sessionName, userName, payment) {
   const queryResisterUserInfo = {
@@ -82,6 +109,7 @@ function resisterUserInfo(client, sessionName, userName, payment) {
   };
   return client.query(queryResisterUserInfo);
 }
+exports.resisterUserInfo = resisterUserInfo;
 
 function deleteUser(client, sessionName, userName) {
   const queryDeleteUser = {
@@ -98,6 +126,7 @@ function updatePayment(client, sessionName, userName, paymentAmount) {
   };
   return client.query(queryRepayment);
 }
+exports.updatePayment = updatePayment;
 
 function checkExistPassword(client, sessionName) {
   const queryCheckExistPassword = {
@@ -128,6 +157,24 @@ async function updateUpdateTime(client, sessionName) {
     console.log(e);
   }
 }
+
+async function initSession(
+  client,
+  sessionName,
+  password,
+  userNameList,
+  paymentList
+) {
+  promiseList = [];
+  promiseList.push(resisterSession(client, sessionName, password));
+  for (let ui = 0; ui < userNameList.length; ui++) {
+    promiseList.push(
+      resisterUserInfo(client, sessionName, userNameList[ui], paymentList[ui])
+    );
+  }
+  return Promise.all(promiseList);
+}
+exports.initSession = initSession;
 
 router.post("/checkSessionName", function (req, res) {
   const client = clientConnect();
@@ -173,27 +220,17 @@ router.post("/getUserInfo", async function (req, res) {
       return;
     }
 
-    let userNameList = [];
-    let paymentList = [];
-    getUserInfo(client, sessionName)
-      .then(function (result) {
-        for (let un = 0; un < result.rows.length; un++) {
-          userNameList.push(result.rows[un].user_name);
-          paymentList.push(result.rows[un].user_payment);
-        }
-        res.send({
-          result: constants.success,
-          userNameList: userNameList,
-          paymentList: paymentList,
-        });
-      })
-      .catch(function (error) {
-        console.log(error);
-        res.status(500).send({ result: constants.error, error: error });
-      })
-      .finally(function () {
-        client.end();
+    const sessionInfo = await getSessionInfo(client, sessionName);
+
+    if (sessionInfo.isSuccess) {
+      res.send({
+        result: constants.success,
+        userNameList: sessionInfo.userNameList,
+        paymentList: sessionInfo.paymentList,
       });
+    } else {
+      res.status(500).send({ result: constants.error, error: error });
+    }
   } catch (e) {
     console.log(e);
   }
@@ -207,20 +244,8 @@ router.post("/resisterSession", function (req, res) {
     const userNameList = req.body.userNameList;
     const paymentList = req.body.paymentList;
 
-    resisterSession(client, sessionName, password)
-      .then(function (result) {
-        console.log(result);
-        for (let un = 0; un < userNameList.length; un++) {
-          const name = userNameList[un];
-          const payment = paymentList[un];
-          resisterUserInfo(client, sessionName, name, payment)
-            .then(function (result) {
-              console.log(result);
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-        }
+    initSession(client, sessionName, password, userNameList, paymentList)
+      .then(function (response) {
         res.send({
           result: constants.success,
           shareLink: constants.appURL + "?sessionName=" + sessionName,
@@ -435,4 +460,4 @@ router.post("/encryptPassword", function (req, res) {
   res.send({ encryptedPassword: myCipher.myEncrypt(plainPassword) });
 });
 
-module.exports = router;
+exports.router = router;
