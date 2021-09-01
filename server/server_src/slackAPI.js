@@ -115,7 +115,8 @@ router.post("/slackPayment", async function (req, res) {
 // チャンネルの割勘セッションの情報（それぞれの平均との差額）を取得する
 //
 router.post("/getSessionInfo", async function (req, res) {
-  console.log("-------body-------\n" + req.body);
+  console.log("-------body-------");
+  console.log(req.body);
   const sessionName = "slack_" + req.body.team_domain + req.body.channel_id;
   try {
     const isDuplicated = await checkSessionName(sessionName);
