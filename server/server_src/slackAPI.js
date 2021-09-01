@@ -142,13 +142,13 @@ router.post("/getSessionInfo", async function (req, res) {
     let responseText = "";
     for (let ui = 0; ui < sessionInfo.userInfo.length; ui++) {
       const paymentStateText =
-        sessionInfo.userInfo.paymentDiff > 0
+        sessionInfo.userInfo[ui].paymentDiff > 0
           ? "円 立て替え中"
           : "円 払う必要あり";
       responseText +=
-        sessionInfo.userInfo.name +
+        sessionInfo.userInfo[ui].name +
         "：" +
-        Math.abs(sessionInfo.userInfo.paymentDiff) +
+        Math.abs(sessionInfo.userInfo[ui].paymentDiff) +
         paymentStateText +
         "\n";
     }
@@ -336,7 +336,7 @@ async function getSessionInfoFromDB(sessionName) {
 
   for (let ui = 0; ui < sessionInfo.userNameList.length; ui++) {
     let userInfo = {
-      name: sessionInfo.userNameList[ui],
+      name: sessionInfo.userNameList[ui].trim(),
       paymentDiff: sessionInfo.paymentList[ui] - paymentAve,
     };
     response.userInfo.push(userInfo);
