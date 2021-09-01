@@ -114,7 +114,7 @@ router.post("/slackPayment", async function (req, res) {
 //
 // チャンネルの割勘セッションの情報（それぞれの平均との差額）を取得する
 //
-router.post("/getUserInfo", async function (req, res) {
+router.post("/getSessionInfo", async function (req, res) {
   console.log("-------body-------\n" + req.body);
   const sessionName = "slack_" + req.body.team_domain + req.body.channel_id;
   try {
