@@ -113,6 +113,7 @@ router.post("/slackPayment", async function (req, res) {
 
 //
 // チャンネルの割勘セッションの情報（それぞれの平均との差額）を取得する
+// 二人用ということで，ひとまず差額と少ない方の名前のみ
 //
 router.post("/getSessionInfo", async function (req, res) {
   console.log("-------body-------");
@@ -140,18 +141,39 @@ router.post("/getSessionInfo", async function (req, res) {
       return;
     }
     let responseText = "";
-    for (let ui = 0; ui < sessionInfo.userInfo.length; ui++) {
-      const paymentStateText =
-        sessionInfo.userInfo[ui].paymentDiff > 0
-          ? "円 立て替え中"
-          : "円 払う必要あり";
-      responseText +=
-        sessionInfo.userInfo[ui].name +
-        "：" +
-        Math.abs(sessionInfo.userInfo[ui].paymentDiff) +
-        paymentStateText +
-        "\n";
+    if (sessionInfo.userInfo.length == 2) {
+      let lessName = "";
+      let moreName = "";
+      let diff = 0;
+      if (sessionInfo.userInfo[0].paymentDiff < 0) {
+        lessName = sessionInfo.userInfo[0].name;
+        moreName = sessionInfo.userInfo[1].name;
+        diff = sessionInfo.userInfo[1].paymentDiff * 2;
+      } else {
+        lessName = sessionInfo.userInfo[1].name;
+        moreName = sessionInfo.userInfo[0].name;
+        diff = sessionInfo.userInfo[0].paymentDiff * 2;
+      }
+      responseText += "次払う人：" + lessName;
+      responseText += "\n詳細：" + moreName + "が" + diff + "円多く払ってる";
+    } else {
+      //
+      // 3人以上なら平均との差額のリストの生成
+      //
+      for (let ui = 0; ui < sessionInfo.userInfo.length; ui++) {
+        const paymentStateText =
+          sessionInfo.userInfo[ui].paymentDiff > 0
+            ? "円 立て替え中"
+            : "円 払う必要あり";
+        responseText +=
+          sessionInfo.userInfo[ui].name +
+          "：" +
+          Math.abs(sessionInfo.userInfo[ui].paymentDiff) +
+          paymentStateText +
+          "\n";
+      }
     }
+    
     let data = {
       response_type: "in_channel",
       text: responseText,
